@@ -1,3 +1,6 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "@kobakazu0429/eslint-config-typescript-react",
+    "next/core-web-vitals"
+  ]
 }
