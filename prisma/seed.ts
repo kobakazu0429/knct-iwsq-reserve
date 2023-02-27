@@ -48,8 +48,8 @@ const seed_events = async ([alice, bob]: User[]) => {
       place: "square",
       attendance_limit: 10,
       published_at: new Date("2023-01-01T12:00:00.000Z"),
-      started_at: new Date("2023-01-01T13:00:00.000Z"),
-      ended_at: new Date("2023-01-01T14:00:00.000Z"),
+      start_time: new Date("2023-01-01T13:00:00.000Z"),
+      end_time: new Date("2023-01-01T14:00:00.000Z"),
       organizerId: alice.id,
     },
     {
@@ -57,8 +57,8 @@ const seed_events = async ([alice, bob]: User[]) => {
       place: "square",
       attendance_limit: 5,
       published_at: new Date("2023-01-01T12:00:00.000Z"),
-      started_at: new Date("2023-01-01T16:00:00.000Z"),
-      ended_at: new Date("2023-01-01T17:00:00.000Z"),
+      start_time: new Date("2023-01-01T16:00:00.000Z"),
+      end_time: new Date("2023-01-01T17:00:00.000Z"),
       organizerId: alice.id,
     },
     {
@@ -66,8 +66,8 @@ const seed_events = async ([alice, bob]: User[]) => {
       place: "square",
       attendance_limit: 2,
       published_at: new Date("2023-01-01T12:00:00.000Z"),
-      started_at: new Date("2023-01-01T18:00:00.000Z"),
-      ended_at: new Date("2023-01-01T19:00:00.000Z"),
+      start_time: new Date("2023-01-01T18:00:00.000Z"),
+      end_time: new Date("2023-01-01T19:00:00.000Z"),
       organizerId: bob.id,
     },
   ];

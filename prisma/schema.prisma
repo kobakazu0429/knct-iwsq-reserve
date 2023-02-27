@@ -57,8 +57,8 @@ model Event {
   description      String?
   place            String
   published_at     DateTime?
-  started_at       DateTime
-  ended_at         DateTime
+  start_time       DateTime
+  end_time         DateTime
   organizer        User         @relation(fields: [organizerId], references: [id])
   organizerId      String
   attendances      Attendance[]
