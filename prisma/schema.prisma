@@ -9,3 +9,109 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  GUEST
+  TEACHING_ASSISTANT
+  ADMIN
+}
+
+enum Department {
+  M
+  E
+  C
+  A
+  S
+}
+
+model Attendance {
+  id                  String     @id @default(cuid())
+  grade               Int
+  department          Department
+  name                String
+  email               String
+  canceled_at         DateTime?
+  cancel_token        String
+  waiting             Boolean    @default(true)
+  waiting_deadline_at DateTime?
+  mails               Mail[]
+  Event               Event      @relation(fields: [eventId], references: [id])
+  eventId             String
+  createdAt           DateTime   @default(now()) @map("created_at")
+  updatedAt           DateTime   @default(now()) @updatedAt @map("updated_at")
+}
+
+model Mail {
+  id         Int          @id @default(autoincrement())
+  subject    String
+  body       String
+  sender     User         @relation(fields: [senderId], references: [id])
+  senderId   String
+  recipients Attendance[]
+  createdAt  DateTime     @default(now()) @map("created_at")
+}
+
+model Event {
+  id               String       @id @default(cuid())
+  name             String
+  description      String?
+  place            String
+  published_at     DateTime?
+  started_at       DateTime
+  ended_at         DateTime
+  organizer        User         @relation(fields: [organizerId], references: [id])
+  organizerId      String
+  attendances      Attendance[]
+  attendance_limit Int
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @default(now()) @updatedAt @map("updated_at")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String?   @unique
+  emailVerified DateTime?
+  role          Role      @default(GUEST)
+  accounts      Account[]
+  sessions      Session[]
+  events        Event[]
+  Mail          Mail[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
