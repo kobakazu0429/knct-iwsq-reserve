@@ -17,54 +17,110 @@ enum Role {
 }
 
 enum Department {
-  M
-  E
-  C
-  A
-  S
+  M // 機械工学科
+  E // 電気情報工学科
+  C // 環境都市工学科
+  A // 建築学科
+  S // 専攻科
+  GRADUATE // 卒業生
+  PARENT // 保護者
+  TEACHER // 教員
+  OTHER // その他
 }
 
-model Attendance {
-  id                  String     @id @default(cuid())
-  grade               Int
-  department          Department
-  name                String
-  email               String
-  canceled_at         DateTime?
-  cancel_token        String
-  waiting             Boolean    @default(true)
-  waiting_deadline_at DateTime?
-  mails               Mail[]
-  Event               Event      @relation(fields: [eventId], references: [id])
-  eventId             String
-  createdAt           DateTime   @default(now()) @map("created_at")
-  updatedAt           DateTime   @default(now()) @updatedAt @map("updated_at")
+enum Grade {
+  FIRST // 本科1年
+  SECOND // 本科2年
+  THIRD // 本科3年
+  FOURTH // 本科4年
+  FIFTH // 本科5年
+  JUNIOR // 専攻科1年
+  SENIOR // 専攻科2年
+  GRADUATE // 卒業生
+  PARENT // 保護者
+  TEACHER // 教員
+  OTHER // その他
+}
+
+model EventUser {
+  id            String       @id @default(cuid())
+  department    Department
+  grade         Grade
+  name          String
+  email         String
+  mails         Mail[]
+  participantId String?
+  Participant   Participant? @relation(fields: [participantId], references: [id])
+  applicantId   String?
+  Applicant     Applicant?   @relation(fields: [applicantId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @default(now()) @updatedAt @map("updated_at")
+}
+
+model Applicant {
+  id           String      @id @default(cuid())
+  canceled_at  DateTime?
+  cancel_token String
+  EventUser    EventUser[]
+  eventId      String
+  Event        Event       @relation(fields: [eventId], references: [id])
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @default(now()) @updatedAt @map("updated_at")
+}
+
+model Participant {
+  id           String      @id @default(cuid())
+  canceled_at  DateTime?
+  cancel_token String
+  EventUser    EventUser[]
+  eventId      String
+  Event        Event       @relation(fields: [eventId], references: [id])
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @default(now()) @updatedAt @map("updated_at")
 }
 
 model Mail {
-  id         Int          @id @default(sequence())
+  id         Int           @id @default(sequence())
   subject    String
   body       String
-  sender     User         @relation(fields: [senderId], references: [id])
+  sender     DashboardUser @relation(fields: [senderId], references: [id])
   senderId   String
-  recipients Attendance[]
-  createdAt  DateTime     @default(now()) @map("created_at")
+  recipients EventUser[]
+  createdAt  DateTime      @default(now()) @map("created_at")
 }
 
 model Event {
-  id               String       @id @default(cuid())
+  id               String            @id @default(cuid())
   name             String
   description      String?
   place            String
   published_at     DateTime?
+  hidden           Boolean           @default(true)
   start_time       DateTime
   end_time         DateTime
-  organizer        User         @relation(fields: [organizerId], references: [id])
+  organizer        DashboardUser     @relation(fields: [organizerId], references: [id])
   organizerId      String
-  attendances      Attendance[]
   attendance_limit Int
-  createdAt        DateTime     @default(now()) @map("created_at")
-  updatedAt        DateTime     @default(now()) @updatedAt @map("updated_at")
+  ApprovalRequest  ApprovalRequest[]
+  Applicant        Applicant[]
+  Participant      Participant[]
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
+}
+
+enum ApprovalRequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+model ApprovalRequest {
+  id        String                @id @default(cuid())
+  status    ApprovalRequestStatus @default(PENDING)
+  eventId   String
+  event     Event                 @relation(fields: [eventId], references: [id])
+  createdAt DateTime              @default(now()) @map("created_at")
+  updatedAt DateTime              @default(now()) @updatedAt @map("updated_at")
 }
 
 model Account {
@@ -81,20 +137,20 @@ model Account {
   id_token          String?
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user DashboardUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
+  id           String        @id @default(cuid())
+  sessionToken String        @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         DashboardUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model User {
+model DashboardUser {
   id            String    @id @default(cuid())
   name          String
   email         String?   @unique
@@ -103,7 +159,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   events        Event[]
-  Mail          Mail[]
+  mails         Mail[]
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
 }
