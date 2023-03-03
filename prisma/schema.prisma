@@ -61,6 +61,7 @@ model Applicant {
   id           String      @id @default(cuid())
   canceled_at  DateTime?
   cancel_token String
+  deadline     DateTime?
   EventUser    EventUser[]
   eventId      String
   Event        Event       @relation(fields: [eventId], references: [id])
