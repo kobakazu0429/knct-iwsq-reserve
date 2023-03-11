@@ -1,6 +1,7 @@
 {
   "extends": [
     "@kobakazu0429/eslint-config-typescript-react",
-    "next/core-web-vitals"
+    "next/core-web-vitals",
+    "baseui"
   ]
 }
