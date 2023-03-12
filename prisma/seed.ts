@@ -42,7 +42,43 @@ const seed_users = async () => {
 };
 
 const seed_events = async ([alice, bob]: User[]) => {
-  const events: Prisma.EventCreateManyInput[] = [
+  const anzu = {
+    EventUser: {
+      create: {
+        department: "M",
+        grade: "FIRST",
+        name: "anzu",
+        email: "anzu@example.com",
+      },
+    },
+    cancel_token: "anzu_cancel_token",
+  } as const;
+
+  const baki = {
+    EventUser: {
+      create: {
+        department: "M",
+        grade: "SECOND",
+        name: "baki",
+        email: "baki@example.com",
+      },
+    },
+    cancel_token: "baki_cancel_token",
+  } as const;
+
+  const choco = {
+    EventUser: {
+      create: {
+        department: "M",
+        grade: "THIRD",
+        name: "choco",
+        email: "choco@example.com",
+      },
+    },
+    cancel_token: "choco_cancel_token",
+  } as const;
+
+  const events: Prisma.EventCreateInput[] = [
     {
       name: "3d printer lecture",
       place: "square",
@@ -50,7 +86,12 @@ const seed_events = async ([alice, bob]: User[]) => {
       published_at: new Date("2023-01-01T12:00:00.000Z"),
       start_time: new Date("2023-01-01T13:00:00.000Z"),
       end_time: new Date("2023-01-01T14:00:00.000Z"),
-      organizerId: alice.id,
+      organizer: {
+        connect: { id: alice.id },
+      },
+      Participant: {
+        create: [anzu],
+      },
     },
     {
       name: "laser cutter lecture",
@@ -59,7 +100,12 @@ const seed_events = async ([alice, bob]: User[]) => {
       published_at: new Date("2023-01-01T12:00:00.000Z"),
       start_time: new Date("2023-01-01T16:00:00.000Z"),
       end_time: new Date("2023-01-01T17:00:00.000Z"),
-      organizerId: alice.id,
+      organizer: {
+        connect: { id: alice.id },
+      },
+      Participant: {
+        create: [baki, choco],
+      },
     },
     {
       name: "cnc lecture",
@@ -68,45 +114,31 @@ const seed_events = async ([alice, bob]: User[]) => {
       published_at: new Date("2023-01-01T12:00:00.000Z"),
       start_time: new Date("2023-01-01T18:00:00.000Z"),
       end_time: new Date("2023-01-01T19:00:00.000Z"),
-      organizerId: bob.id,
+      organizer: {
+        connect: { id: bob.id },
+      },
     },
   ];
   const ops = events.map((event) => prisma.event.create({ data: event }));
   return prisma.$transaction(ops);
 };
 
-const seed_attendances = async ([printer, laser, cnc]: Event[]) => {
-  const attendances: Prisma.AttendanceCreateManyInput[] = [
-    {
-      department: "M",
-      grade: 1,
-      name: "anzu",
-      email: "anzu@example.com",
-      cancel_token: "anzu_cancel_token",
-      eventId: printer.id,
-    },
-    {
-      department: "M",
-      grade: 2,
-      name: "baki",
-      email: "baki@example.com",
-      cancel_token: "baki_cancel_token",
-      eventId: printer.id,
-    },
-    {
-      department: "M",
-      grade: 3,
-      name: "choco",
-      email: "choco@example.com",
-      cancel_token: "choco_cancel_token",
-      eventId: printer.id,
-    },
-  ];
-  const ops = attendances.map((attendance) =>
-    prisma.attendance.create({ data: attendance })
-  );
-  return prisma.$transaction(ops);
-};
+// const seed_attendances = async ([printer, laser, cnc]: Event[]) => {
+//   const eventUsers: Prisma.EventUserCreateManyInput[] = [
+//     {
+//       department: "M",
+//       grade: "FIRST",
+//       name: "anzu",
+//       email: "anzu@example.com",
+//       // cancel_token: "anzu_cancel_token",
+//       participantId: "1",
+//     },
+//   ];
+//   const ops = attendances.map((attendance) =>
+//     prisma.attendance.create({ data: attendance })
+//   );
+//   return prisma.$transaction(ops);
+// };
 
 const main = async () => {
   await TRUNCATE();
@@ -115,7 +147,7 @@ const main = async () => {
 
   const [alice, bob] = await seed_users();
   const [printer, laser, cnc] = await seed_events([alice, bob]);
-  const [anzu, baki, choco] = await seed_attendances([printer, laser, cnc]);
+  // const [anzu, baki, choco] = await seed_attendances([printer, laser, cnc]);
 
   console.log(`Seeding finished.`);
 };
