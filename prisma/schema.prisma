@@ -81,13 +81,13 @@ model Participant {
 }
 
 model Mail {
-  id         Int           @id @default(sequence())
+  id         Int         @id @default(sequence())
   subject    String
   body       String
-  sender     DashboardUser @relation(fields: [senderId], references: [id])
+  sender     User        @relation(fields: [senderId], references: [id])
   senderId   String
   recipients EventUser[]
-  createdAt  DateTime      @default(now()) @map("created_at")
+  createdAt  DateTime    @default(now()) @map("created_at")
 }
 
 model Event {
@@ -99,7 +99,7 @@ model Event {
   hidden           Boolean           @default(true)
   start_time       DateTime
   end_time         DateTime
-  organizer        DashboardUser     @relation(fields: [organizerId], references: [id])
+  organizer        User              @relation(fields: [organizerId], references: [id])
   organizerId      String
   attendance_limit Int
   ApprovalRequest  ApprovalRequest[]
@@ -138,37 +138,29 @@ model Account {
   id_token          String?
   session_state     String?
 
-  user DashboardUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String        @id @default(cuid())
-  sessionToken String        @unique
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         DashboardUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model DashboardUser {
-  id            String    @id @default(cuid())
-  name          String
-  email         String?   @unique
-  emailVerified DateTime?
-  role          Role      @default(GUEST)
-  accounts      Account[]
-  sessions      Session[]
-  events        Event[]
-  mails         Mail[]
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  image     String?
+  email     String?   @unique
+  role      Role      @default(GUEST)
+  accounts  Account[]
+  sessions  Session[]
+  events    Event[]
+  mails     Mail[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
 }
