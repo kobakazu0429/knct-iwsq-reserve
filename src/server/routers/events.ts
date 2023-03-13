@@ -5,7 +5,7 @@ import { prisma } from "../../prisma";
 import { userRoleHelper } from "../../prisma/user";
 
 export const eventsRouter = router({
-  events: procedure
+  get: procedure
     .input(
       z
         .object({
@@ -51,5 +51,36 @@ export const eventsRouter = router({
       console.log(events);
 
       return events;
+    }),
+  create: procedure
+    .input(
+      z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        place: z.string(),
+        hidden: z.boolean().optional(),
+        start_time: z.union([z.string().datetime(), z.date()]),
+        end_time: z.union([z.string().datetime(), z.date()]),
+        published_at: z.union([z.string().datetime(), z.date()]).optional(),
+        attendance_limit: z.number().min(1).max(255),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session?.user.id;
+      if (!userId) return { status: false, message: "userId is undefined." };
+
+      const role = ctx.session?.user?.role;
+
+      const roleHelper = userRoleHelper(role);
+      const result = await prisma.event.create({
+        data: {
+          ...input,
+          organizerId: userId,
+          hidden: roleHelper.isGuest ? true : input.hidden ?? true,
+          published_at: roleHelper.isGuest ? null : input.published_at,
+        },
+      });
+
+      return { status: true, message: "created", data: result };
     }),
 });

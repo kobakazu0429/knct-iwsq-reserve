@@ -7,16 +7,11 @@ import {
   NumericalColumn,
   StringColumn,
 } from "baseui/data-table";
+import { useTrpc } from "../../../trpc";
 
-type RowDataT = {
-  id: string;
-  name: string;
-  description: string | null;
-  place: string;
-  start_time: string;
-  end_time: string;
-  attendance_limit: number;
-};
+import { AppRouterOutput } from "../../../server/routers";
+
+type Event = AppRouterOutput["events"]["get"][number];
 
 const dateFormatter = new Intl.DateTimeFormat("ja-Jp", {
   weekday: "short",
@@ -30,39 +25,50 @@ const dateFormatter = new Intl.DateTimeFormat("ja-Jp", {
 const columns = [
   StringColumn({
     title: "イベント名",
-    mapDataToValue: (data: RowDataT) => data.name,
+    mapDataToValue: (data: Event) => data.name,
   }),
   StringColumn({
     title: "開始時間",
-    mapDataToValue: (data: RowDataT) =>
+    mapDataToValue: (data: Event) =>
       dateFormatter.format(new Date(data.start_time)),
   }),
   StringColumn({
     title: "終了時間",
-    mapDataToValue: (data: RowDataT) =>
+    mapDataToValue: (data: Event) =>
       dateFormatter.format(new Date(data.end_time)),
   }),
   NumericalColumn({
     title: "制限人数",
-    mapDataToValue: (data: RowDataT) => data.attendance_limit,
+    mapDataToValue: (data: Event) => data.attendance_limit,
   }),
   NumericalColumn({
     title: "申込数",
-    mapDataToValue: (data: RowDataT) => data.attendance_limit,
+    mapDataToValue: (data: Event) => data.attendance_limit,
   }),
   NumericalColumn({
     title: "キャンセル待ち",
-    mapDataToValue: (data: RowDataT) => data.attendance_limit,
-  })
+    mapDataToValue: (data: Event) => data.attendance_limit,
+  }),
+  StringColumn({
+    title: "開催者",
+    mapDataToValue: (data: Event) => data.organizer?.name ?? "",
+  }),
 ];
 
 const DashboardPage: NextPage = () => {
   const [css] = useStyletron();
+  const trpc = useTrpc();
   const { data, error, isLoading } = useSWR("hello", () => {
-    return fetch("/api/events").then((res) => res.json());
+    return trpc.events.get.query();
   });
 
-  console.log(data);
+  if (error) {
+    console.log("error", error);
+  }
+
+  if (!isLoading) {
+    console.log("data", data);
+  }
 
   return (
     <Dashboard>
