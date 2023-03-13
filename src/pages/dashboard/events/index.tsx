@@ -6,7 +6,10 @@ import {
   StatefulDataTable,
   NumericalColumn,
   StringColumn,
+  CustomColumn,
 } from "baseui/data-table";
+import { Link } from "../../../components/baseui/Link";
+
 import { useTrpc } from "../../../trpc";
 
 import { AppRouterOutput } from "../../../server/routers";
@@ -52,6 +55,17 @@ const columns = [
   StringColumn({
     title: "開催者",
     mapDataToValue: (data: Event) => data.organizer?.name ?? "",
+  }),
+  CustomColumn<{ id: Event["id"] }, {}>({
+    title: "その他",
+    mapDataToValue: (data: Event) => ({
+      id: data.id,
+    }),
+    renderCell: function Cell(props) {
+      return (
+        <Link href={`/dashboard/events/${props.value.id}`}>詳細を見る</Link>
+      );
+    },
   }),
 ];
 

@@ -39,6 +39,7 @@ export const eventsRouter = router({
           NOT: {
             published_at: null,
           },
+          id: input?.id,
           ...(roleHelper.isNotAnonymous && {
             hidden: input?.hidden,
           }),
@@ -47,8 +48,6 @@ export const eventsRouter = router({
           },
         },
       });
-
-      console.log(events);
 
       return events;
     }),

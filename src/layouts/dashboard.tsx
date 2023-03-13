@@ -1,20 +1,19 @@
-import React, { ReactNode, useState, type FC } from "react";
-import Link from "next/link";
+import React, { type FC, type ReactNode } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { type User } from "@prisma/client";
 import { userRoleExtender } from "../prisma/user";
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
-import { StyledLink } from "baseui/link";
 import { Button } from "baseui/button";
-import { Navigation, StyledNavLink, type Item } from "baseui/side-navigation";
+import { Navigation, type Item } from "baseui/side-navigation";
 import {
   HeaderNavigation,
   ALIGN,
   StyledNavigationItem as NavigationItem,
   StyledNavigationList as NavigationList,
 } from "baseui/header-navigation";
+import { Link, NavLink } from "../components/baseui/Link";
 
 const nav: Item[] = [
   {
@@ -63,10 +62,7 @@ export const Dashboard: FC<Props> = ({
     return (
       <div>
         <p>Access Denied</p>
-
-        <Link href="/dashboard/signin" passHref>
-          <StyledLink>SignIn</StyledLink>
-        </Link>
+        <Link href="/dashboard/signin">SignIn</Link>
       </div>
     );
   }
@@ -106,14 +102,12 @@ export const Dashboard: FC<Props> = ({
           activeItemId={router.pathname}
           overrides={{
             Root: {
-              style: ({ $active }) => {
-                return {
-                  width: "300px",
-                  height: "100dvh",
-                  borderRightColor: theme.colors.borderOpaque,
-                  borderRightWidth: "1px",
-                  borderRightStyle: "solid",
-                };
+              style: {
+                width: "300px",
+                height: "100dvh",
+                borderRightColor: theme.colors.borderOpaque,
+                borderRightWidth: "1px",
+                borderRightStyle: "solid",
               },
             },
             NavItem: {
@@ -137,11 +131,7 @@ export const Dashboard: FC<Props> = ({
             },
             NavLink: {
               component: (props) => {
-                return (
-                  <Link href={props.href} passHref>
-                    <StyledNavLink {...props} />
-                  </Link>
-                );
+                return <NavLink {...props} />;
               },
             },
           }}
