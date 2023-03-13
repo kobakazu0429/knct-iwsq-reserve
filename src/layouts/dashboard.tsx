@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { type User } from "@prisma/client";
 import { userRoleExtender } from "../prisma/user";
+import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
 import { StyledLink } from "baseui/link";
 import { Button } from "baseui/button";
@@ -47,6 +48,7 @@ export const Dashboard: FC<Props> = ({
 }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [css, theme] = useStyletron();
 
   const userRole = session?.user.role;
 
@@ -104,31 +106,31 @@ export const Dashboard: FC<Props> = ({
           activeItemId={router.pathname}
           overrides={{
             Root: {
-              style: ({ $active, $theme }) => {
+              style: ({ $active }) => {
                 return {
                   width: "300px",
-                  height: "100%",
-                  borderRightColor: $theme.colors.mono900,
-                  borderRightWidth: "2px",
+                  height: "100dvh",
+                  borderRightColor: theme.colors.borderOpaque,
+                  borderRightWidth: "1px",
                   borderRightStyle: "solid",
                 };
               },
             },
             NavItem: {
-              style: ({ $active, $theme }) => {
+              style: ({ $active }) => {
                 if (!$active) {
                   return {
                     ":hover": {
-                      color: $theme.colors.positive400,
+                      color: theme.colors.positive400,
                     },
                   };
                 }
                 return {
-                  backgroundColor: $theme.colors.positive400,
-                  borderLeftColor: $theme.colors.mono900,
-                  color: $theme.colors.mono900,
+                  backgroundColor: theme.colors.positive400,
+                  borderLeftColor: theme.colors.mono900,
+                  color: theme.colors.mono900,
                   ":hover": {
-                    color: $theme.colors.positive400,
+                    color: theme.colors.positive400,
                   },
                 };
               },
@@ -145,7 +147,14 @@ export const Dashboard: FC<Props> = ({
           }}
         />
 
-        <main style={{ width: "100%" }}>{children}</main>
+        <main
+          className={css({
+            width: "100%",
+            padding: `${theme.sizing.scale600} ${theme.sizing.scale1200}`,
+          })}
+        >
+          {children}
+        </main>
       </Block>
     </>
   );
