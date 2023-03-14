@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import useSWR from "swr";
 import { Dashboard } from "../../../layouts/dashboard";
+import { formatISO9075 } from "date-fns";
 import { useStyletron } from "baseui";
 import {
   StatefulDataTable,
@@ -9,21 +10,10 @@ import {
   CustomColumn,
 } from "baseui/data-table";
 import { Link } from "../../../components/baseui/Link";
-
 import { useTrpc } from "../../../trpc";
-
 import { AppRouterOutput } from "../../../server/routers";
 
 type Event = AppRouterOutput["events"]["get"][number];
-
-const dateFormatter = new Intl.DateTimeFormat("ja-Jp", {
-  weekday: "short",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-});
 
 const columns = [
   StringColumn({
@@ -32,13 +22,11 @@ const columns = [
   }),
   StringColumn({
     title: "開始時間",
-    mapDataToValue: (data: Event) =>
-      dateFormatter.format(new Date(data.start_time)),
+    mapDataToValue: (data: Event) => formatISO9075(new Date(data.start_time)),
   }),
   StringColumn({
     title: "終了時間",
-    mapDataToValue: (data: Event) =>
-      dateFormatter.format(new Date(data.end_time)),
+    mapDataToValue: (data: Event) => formatISO9075(new Date(data.end_time)),
   }),
   NumericalColumn({
     title: "制限人数",
@@ -69,19 +57,15 @@ const columns = [
   }),
 ];
 
-const DashboardPage: NextPage = () => {
+const EventsPage: NextPage = () => {
   const [css] = useStyletron();
   const trpc = useTrpc();
-  const { data, error, isLoading } = useSWR("hello", () => {
+  const { data, error, isLoading } = useSWR("events", () => {
     return trpc.events.get.query();
   });
 
   if (error) {
     console.log("error", error);
-  }
-
-  if (!isLoading) {
-    console.log("data", data);
   }
 
   return (
@@ -90,11 +74,12 @@ const DashboardPage: NextPage = () => {
         <StatefulDataTable
           columns={columns}
           rows={(data ?? []).map((v: any) => ({ id: v.id, data: v }))}
-          emptyMessage="custom empty message"
+          loading={isLoading}
+          loadingMessage="読み込み中"
         />
       </div>
     </Dashboard>
   );
 };
 
-export default DashboardPage;
+export default EventsPage;

@@ -125,7 +125,7 @@ const UsersPage: NextPage = () => {
   ];
 
   return (
-    <Dashboard>
+    <Dashboard authorizedRoles="ADMIN">
       <div className={css({ height: "800px", width: "100%" })}>
         <StatefulDataTable
           columns={columns}

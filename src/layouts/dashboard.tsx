@@ -31,14 +31,8 @@ const nav: Item[] = [
     itemId: "/dashboard/mails",
   },
   {
-    title: "ユーザー",
+    title: "ユーザー(Admin)",
     itemId: "/dashboard/users",
-    subNav: [
-      {
-        title: "ユーザー登録",
-        itemId: "/dashboard/users/invite",
-      },
-    ],
   },
 ];
 
@@ -61,14 +55,23 @@ export const Dashboard: FC<Props> = ({
     return <p>Loading...</p>;
   }
 
-  if (
-    status === "unauthenticated" ||
-    !(userRole && userRoleExtender(userRole).includes(authorizedRoles))
-  ) {
+  if (status === "unauthenticated") {
     return (
       <div>
         <p>Access Denied</p>
-        <Link href="/dashboard/signin">SignIn</Link>
+        <Link href="/api/auth/signin">SignIn</Link>
+      </div>
+    );
+  }
+
+  if (!(userRole && userRoleExtender(userRole).includes(authorizedRoles))) {
+    return (
+      <div>
+        <p>Access Denied</p>
+        <p>
+          Access level is {authorizedRoles}. (You are {userRole ?? "unknown"})
+        </p>
+        <Link href="/dashboard">to Dashboard</Link>
       </div>
     );
   }
