@@ -31,8 +31,14 @@ const nav: Item[] = [
     itemId: "/dashboard/mails",
   },
   {
-    title: "ユーザー登録",
-    itemId: "/dashboard/invite",
+    title: "ユーザー",
+    itemId: "/dashboard/users",
+    subNav: [
+      {
+        title: "ユーザー登録",
+        itemId: "/dashboard/users/invite",
+      },
+    ],
   },
 ];
 

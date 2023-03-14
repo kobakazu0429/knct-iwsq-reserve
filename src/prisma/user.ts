@@ -1,7 +1,12 @@
 import { type User } from "@prisma/client";
+export { Role } from "@prisma/client";
+
+export const roles = ["ADMIN", "TEACHING_ASSISTANT", "GUEST", "DENY"] as const;
 
 export const userRoleExtender = (role: User["role"]): User["role"][] => {
-  if (role === "GUEST") {
+  if (role === "DENY") {
+    return ["DENY"];
+  } else if (role === "GUEST") {
     return ["GUEST"];
   } else if (role === "TEACHING_ASSISTANT") {
     return ["GUEST", "TEACHING_ASSISTANT"];
@@ -18,25 +23,17 @@ export const userRoleHelper = (role?: User["role"]) => {
       if (!role) return true;
       return false;
     },
+    get isDeny() {
+      return role === "DENY";
+    },
     get isGuest() {
-      if (role === "GUEST") return true;
-      return false;
+      return role === "GUEST";
     },
     get isTeachingAssistant() {
-      if (role === "TEACHING_ASSISTANT") return true;
-      return false;
+      return role === "TEACHING_ASSISTANT";
     },
     get isAdmin() {
-      if (role === "ADMIN") return true;
-      return false;
-    },
-    get isNotAnonymous() {
-      if (this.isAdmin || this.isTeachingAssistant || this.isGuest) return true;
-      return false;
-    },
-    get isNotGuest() {
-      if (this.isAdmin || this.isTeachingAssistant) return true;
-      return false;
+      return role === "ADMIN";
     },
   };
 };

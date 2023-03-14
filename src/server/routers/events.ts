@@ -27,7 +27,9 @@ export const eventsRouter = router({
           start_time: true,
           end_time: true,
           attendance_limit: true,
-          ...(roleHelper.isNotAnonymous && {
+          ...((roleHelper.isGuest ||
+            roleHelper.isTeachingAssistant ||
+            roleHelper.isAdmin) && {
             organizer: {
               select: {
                 name: true,
@@ -40,7 +42,9 @@ export const eventsRouter = router({
             published_at: null,
           },
           id: input?.id,
-          ...(roleHelper.isNotAnonymous && {
+          ...((roleHelper.isGuest ||
+            roleHelper.isTeachingAssistant ||
+            roleHelper.isAdmin) && {
             hidden: input?.hidden,
           }),
           end_time: {
