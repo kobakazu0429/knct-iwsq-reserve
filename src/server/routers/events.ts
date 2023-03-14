@@ -15,7 +15,9 @@ export const eventsRouter = router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const role = ctx.session?.user?.role;
+      const user = ctx.session?.user;
+      const userId = user?.id;
+      const role = user?.role;
       const roleHelper = userRoleHelper(role);
 
       const events = await prisma.event.findMany({
@@ -47,6 +49,7 @@ export const eventsRouter = router({
             roleHelper.isAdmin) && {
             hidden: input?.hidden,
           }),
+          organizerId: roleHelper.isGuest ? userId : undefined,
           end_time: {
             // gt: new Date(),
           },

@@ -76,6 +76,7 @@ const EventsPage: NextPage = () => {
           rows={(data ?? []).map((v: any) => ({ id: v.id, data: v }))}
           loading={isLoading}
           loadingMessage="読み込み中"
+          emptyMessage="イベントは見つかりませんでした"
         />
       </div>
     </Dashboard>
