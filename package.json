@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint && yarn lint:eslint && yarn lint:prettier",
+    "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "eslint \"./src/**/*.{js,ts,tsx}\" --fix",
     "lint:prettier": "prettier \"./src/**/*.{js,ts,tsx}\" --write",
     "seed": "ts-node ./prisma/seed.ts"
@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@kobakazu0429/eslint-config-typescript-react": "^3.1.4",
-    "eslint-plugin-baseui": "^12.2.0",
     "ts-node": "^10.9.1"
   }
 }
