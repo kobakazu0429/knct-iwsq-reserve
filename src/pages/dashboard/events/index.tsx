@@ -13,7 +13,7 @@ import { Link } from "../../../components/baseui/Link";
 import { useTrpc } from "../../../trpc";
 import { AppRouterOutput } from "../../../server/routers";
 
-type Event = AppRouterOutput["events"]["get"][number];
+type Event = AppRouterOutput["events"]["getWithAuth"][number];
 
 const columns = [
   StringColumn({
@@ -46,7 +46,7 @@ const columns = [
   }),
   StringColumn({
     title: "開催者",
-    mapDataToValue: (data: Event) => data.organizer?.name ?? "",
+    mapDataToValue: (data: Event) => data.organizer.name,
   }),
   CustomColumn<{ id: Event["id"] }, {}>({
     title: "その他",
@@ -65,7 +65,7 @@ const EventsPage: NextPage = () => {
   const [css] = useStyletron();
   const trpc = useTrpc();
   const { data, error, isLoading } = useSWR("events", () => {
-    return trpc.events.get.query();
+    return trpc.events.getWithAuth.query();
   });
 
   if (error) {
