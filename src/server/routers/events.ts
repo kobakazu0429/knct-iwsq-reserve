@@ -29,29 +29,30 @@ export const eventsRouter = router({
           start_time: true,
           end_time: true,
           attendance_limit: true,
-          ...((roleHelper.isGuest ||
-            roleHelper.isTeachingAssistant ||
-            roleHelper.isAdmin) && {
+          ...(!roleHelper.isAnonymous && {
             organizer: {
               select: {
                 name: true,
               },
             },
           }),
+          status: true,
+          _count: {
+            select: {
+              Applicant: true,
+              Participant: true,
+            },
+          },
         },
         where: {
           NOT: {
-            published_at: null,
+            published_at: roleHelper.isAnonymous ? null : undefined,
           },
           id: input?.id,
-          ...((roleHelper.isGuest ||
-            roleHelper.isTeachingAssistant ||
-            roleHelper.isAdmin) && {
-            hidden: input?.hidden,
-          }),
+          hidden: roleHelper.isAnonymous ? false : input?.hidden,
           organizerId: roleHelper.isGuest ? userId : undefined,
           end_time: {
-            // gt: new Date(),
+            gt: roleHelper.isAnonymous ? new Date() : undefined,
           },
         },
       });
