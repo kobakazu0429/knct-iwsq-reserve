@@ -21,6 +21,7 @@ export const userRoleHelper = (role?: User["role"]) => {
   return {
     get isAnonymous() {
       if (!role) return true;
+      if (this.isDeny) return true;
       return false;
     },
     get isDeny() {
