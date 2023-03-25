@@ -13,8 +13,9 @@ import { PlainButtonGroup } from "../baseui/PlainButtonGroup";
 import { userRoleHelper } from "../../prisma/user";
 
 interface FormValues {
+  id?: string;
   name: string;
-  description: string | undefined;
+  description?: string;
   place: string;
   attendance_limit: number;
   start_time: any;
@@ -64,6 +65,35 @@ export const handleSubmitCreate = ({ enqueue, dequeue }: SnackbarFunction) => {
   };
 };
 
+export const handleSubmitUpdate = ({ enqueue, dequeue }: SnackbarFunction) => {
+  return (trpc: Trpc) => {
+    return (router: NextRouter) => {
+      return async (data: FormValues) => {
+        enqueue({ message: "保存中です", progress: true }, DURATION.infinite);
+
+        try {
+          // アニメーションと更新の認知のために最低でも1秒は待つ
+          const [result] = await Promise.allSettled([
+            trpc.events.update.mutate({
+              ...data,
+              published_at: data.published_at ?? data.hidden ? "" : new Date(),
+            }),
+            sleep(1000),
+          ]);
+          console.log(result);
+          if (result.status === "rejected") throw result;
+
+          dequeue();
+          enqueue({ message: "保存しました" });
+          router.push(`/dashboard/events/${result.value.id}`);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+    };
+  };
+};
+
 interface Props {
   defaultValues?: Partial<FormValues>;
   onSubmit: (data: FormValues) => void;
@@ -84,9 +114,18 @@ export const EventEditor: FC<Props> = ({ defaultValues, onSubmit }) => {
     },
   });
 
+  const watchHidden = methods.watch("hidden");
+
+  const submitButtonText = useMemo(() => {
+    if (isGuest) return "申請する";
+    if (watchHidden) return "保存する";
+    return "公開する";
+  }, [watchHidden, isGuest]);
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <input type="hidden" name="id" />
         <Input label="イベント名" caption="caption" name="name" required />
         <Textarea label="説明" caption="caption" name="description" />
         <Input label="場所" caption="caption" name="place" required />
@@ -107,7 +146,7 @@ export const EventEditor: FC<Props> = ({ defaultValues, onSubmit }) => {
           <Button kind="secondary" disabled>
             保存する
           </Button>
-          <Button type="submit">{isGuest ? "申請する" : "公開する"}</Button>
+          <Button type="submit">{submitButtonText}</Button>
         </PlainButtonGroup>
       </form>
     </FormProvider>

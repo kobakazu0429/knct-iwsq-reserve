@@ -28,3 +28,5 @@ export const useTrpc = () => {
   }, []);
   return client;
 };
+
+export type Trpc = ReturnType<typeof useTrpc>;

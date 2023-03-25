@@ -64,6 +64,7 @@ export const eventsRouter = router({
           start_time: true,
           end_time: true,
           attendance_limit: true,
+          hidden: true,
           organizer: {
             select: {
               name: true,
@@ -200,6 +201,38 @@ export const eventsRouter = router({
         }
 
         return event;
+      });
+    }),
+  update: authProcedure
+    .input(
+      z.object({
+        id: z.string().optional(),
+        name: z.string(),
+        description: z.string().optional(),
+        place: z.string().optional(),
+        hidden: z.boolean().optional(),
+        start_time: z.union([z.string().datetime(), z.date()]).optional(),
+        end_time: z.union([z.string().datetime(), z.date()]).optional(),
+        published_at: z.union([z.string().datetime(), z.date()]).optional(),
+        attendance_limit: z.number().min(1).max(255).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const data: Prisma.EventUpdateInput = {
+        ...input,
+        hidden: ctx.session.user.roleHelper.isGuest
+          ? true
+          : input.hidden ?? true,
+        published_at: ctx.session.user.roleHelper.isGuest
+          ? null
+          : input.published_at ?? null,
+      };
+
+      return await prisma.event.update({
+        data: data,
+        where: {
+          id: input.id,
+        },
       });
     }),
 });
