@@ -5,6 +5,7 @@ import { type User } from "@prisma/client";
 import { userRoleExtender } from "../prisma/user";
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
+import { HeadingLevel } from "baseui/heading";
 import { Button } from "baseui/button";
 import { Navigation, type Item } from "baseui/side-navigation";
 import {
@@ -152,7 +153,7 @@ export const Dashboard: FC<Props> = ({
             padding: `${theme.sizing.scale600} ${theme.sizing.scale1200}`,
           })}
         >
-          {children}
+          <HeadingLevel>{children}</HeadingLevel>
         </main>
       </Block>
     </>

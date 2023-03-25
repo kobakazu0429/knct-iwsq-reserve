@@ -59,6 +59,75 @@ export const eventsRouter = router({
 
       return events;
     }),
+  detailById: procedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const user = ctx.session?.user;
+      const userId = user?.id;
+      const role = user?.role;
+      const roleHelper = userRoleHelper(role);
+
+      // if (!userId) return { status: false, message: "userId is undefined." };
+
+      // if(roleHelper.isGuest){
+      return prisma.event.findUnique({
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          place: true,
+          start_time: true,
+          end_time: true,
+          attendance_limit: true,
+          organizer: {
+            select: {
+              name: true,
+            },
+          },
+          status: true,
+          Applicant: {
+            select: {
+              EventUser: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  affiliation: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              },
+              deadline: true,
+              canceled_at: true,
+              cancel_token: true,
+            },
+          },
+          Participant: {
+            select: {
+              EventUser: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  affiliation: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              },
+              canceled_at: true,
+              cancel_token: true,
+            },
+          },
+        },
+        where: {
+          id: input.id,
+        },
+      });
+    }),
   create: procedure
     .input(
       z.object({
