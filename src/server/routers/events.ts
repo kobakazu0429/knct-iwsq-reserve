@@ -2,7 +2,6 @@ import { router, procedure, authProcedure } from "../trpc";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma";
-import { userRoleHelper } from "../../prisma/user";
 
 export const eventsRouter = router({
   get: procedure
@@ -105,6 +104,8 @@ export const eventsRouter = router({
           start_time: true,
           end_time: true,
           attendance_limit: true,
+          published_at: true,
+          hidden: true,
           organizer: {
             select: {
               name: true,
@@ -182,19 +183,23 @@ export const eventsRouter = router({
           : input.published_at ?? null,
       };
 
-      const result = ctx.session.user.roleHelper.isGuest
-        ? await prisma.approvalRequest.create({
+      return await prisma.$transaction(async (tx) => {
+        const event = await tx.event.create({
+          data: eventData,
+        });
+
+        if (ctx.session.user.roleHelper.isGuest) {
+          await tx.approvalRequest.create({
             data: {
               event: {
-                create: eventData,
+                connect: { id: event.id },
               },
               status: "PENDING",
             },
-          })
-        : await prisma.event.create({
-            data: eventData,
           });
+        }
 
-      return result;
+        return event;
+      });
     }),
 });

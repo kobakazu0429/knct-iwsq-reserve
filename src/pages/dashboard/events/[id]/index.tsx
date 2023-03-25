@@ -34,11 +34,13 @@ const applicantColumns = [
   }),
   StringColumn({
     title: "キャンセル日時",
-    mapDataToValue: (data: Applicant) => data.canceled_at,
+    mapDataToValue: (data: Applicant) =>
+      data.canceled_at ? formatISO9075(new Date(data.canceled_at)) : "",
   }),
   StringColumn({
     title: "参加申込期限",
-    mapDataToValue: (data: Applicant) => data.deadline,
+    mapDataToValue: (data: Applicant) =>
+      data.deadline ? formatISO9075(new Date(data.deadline)) : "",
   }),
   StringColumn({
     title: "登録日時",
@@ -71,7 +73,8 @@ const participantColumns = [
   }),
   StringColumn({
     title: "キャンセル日時",
-    mapDataToValue: (data: Participant) => data.canceled_at,
+    mapDataToValue: (data: Participant) =>
+      data.canceled_at ? formatISO9075(new Date(data.canceled_at)) : "",
   }),
   StringColumn({
     title: "登録日時",
@@ -129,6 +132,8 @@ const EventDetailPage: NextPage = () => {
         <Link href={`${router.query.id}/edit`}>編集する</Link>
         <p>ID: {data.id}</p>
         <p>状態: {data.status}</p>
+        <p>公開日: {data.published_at}</p>
+        <p>非公開: {data.hidden.toString()}</p>
         <p>主催者: {data.organizer.name}</p>
         <p>説明: {data.description}</p>
         <p>場所: {data.place}</p>
