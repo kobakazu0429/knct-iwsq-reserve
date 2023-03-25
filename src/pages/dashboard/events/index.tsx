@@ -21,6 +21,10 @@ const columns = [
     mapDataToValue: (data: Event) => data.name,
   }),
   StringColumn({
+    title: "状態",
+    mapDataToValue: (data: Event) => data.status,
+  }),
+  StringColumn({
     title: "開始時間",
     mapDataToValue: (data: Event) => formatISO9075(new Date(data.start_time)),
   }),
@@ -33,12 +37,12 @@ const columns = [
     mapDataToValue: (data: Event) => data.attendance_limit,
   }),
   NumericalColumn({
-    title: "申込数",
-    mapDataToValue: (data: Event) => data.attendance_limit,
+    title: "参加人数",
+    mapDataToValue: (data: Event) => data._count.Participant,
   }),
   NumericalColumn({
     title: "キャンセル待ち",
-    mapDataToValue: (data: Event) => data.attendance_limit,
+    mapDataToValue: (data: Event) => data._count.Applicant,
   }),
   StringColumn({
     title: "開催者",
