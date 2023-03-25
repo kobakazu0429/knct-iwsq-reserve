@@ -1,11 +1,13 @@
 import React, {
   useState,
   useEffect,
+  useMemo,
   type FC,
   type ComponentProps,
 } from "react";
 import { useFormContext } from "react-hook-form";
 import { isAfter, isBefore, add, roundToNearestMinutes } from "date-fns";
+import { z } from "zod";
 import { useStyletron } from "baseui";
 import { FormControl } from "baseui/form-control";
 import { ArrowRight } from "baseui/icon";
@@ -65,16 +67,26 @@ const DateTimePicker: FC<{
 
 export const ComposedDateTimeRangePickers: FC = () => {
   const [css, theme] = useStyletron();
-  const { control, setValue } = useFormContext();
-  const [dates, setDates] = useState([
-    roundToNearestMinutes(new Date(), { nearestTo: 15 }),
-    roundToNearestMinutes(add(new Date(), { hours: 1 }), { nearestTo: 15 }),
-  ]);
+  const { getValues, setValue } = useFormContext();
+
+  const defaultValue = useMemo(() => {
+    const values = [getValues("start_time"), getValues("end_time")];
+    if (values.every((v) => z.string().datetime().safeParse(v).success)) {
+      return values.map((v) => new Date(v));
+    }
+  }, [getValues]);
+
+  const [dates, setDates] = useState(
+    defaultValue ?? [
+      roundToNearestMinutes(new Date(), { nearestTo: 15 }),
+      roundToNearestMinutes(add(new Date(), { hours: 1 }), { nearestTo: 15 }),
+    ]
+  );
 
   useEffect(() => {
     setValue("start_time", dates[0]);
     setValue("end_time", dates[1]);
-  }, [dates]);
+  }, [dates, setValue]);
 
   return (
     <div
