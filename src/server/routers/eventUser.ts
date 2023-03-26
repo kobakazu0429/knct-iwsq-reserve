@@ -1,24 +1,69 @@
-import { participatingNotificationEmail } from "./../../sendgrid/eventUser";
 import { router, procedure } from "../trpc";
 import { type Prisma } from "@prisma/client";
 import { z } from "zod";
 import { nanoid } from "nanoid";
-import { prisma } from "../../prisma";
-import { appliedNotificationEmail } from "../../sendgrid/eventUser";
 import { formatISO9075 } from "date-fns";
-import { cancelableParticipantOrApplicantInputSchema } from "../../prisma/eventUser";
+import { prisma } from "../../prisma";
+import {
+  appliedNotificationEmail,
+  participatingNotificationEmail,
+} from "../../sendgrid/eventUser";
+import {
+  cancelApplicantInputSchema,
+  cancelParticipantInputSchema,
+} from "../../prisma/eventUser";
+import { getBaseUrl } from "../../utils/url";
 
 export const eventUsersRouter = router({
-  cancelableParticipantOrApplicant: procedure
-    .input(cancelableParticipantOrApplicantInputSchema)
+  cancelableApplicant: procedure
+    .input(cancelApplicantInputSchema)
     .query(async ({ input }) => {
-      if (input.type === "applied") {
-        const result = await prisma.eventUser.findFirst({
-          select: {
-            id: true,
-            Applicant: {
-              select: { Event: { select: { name: true, id: true } } },
+      const result = await prisma.eventUser.findFirstOrThrow({
+        select: {
+          id: true,
+          Applicant: {
+            select: {
+              canceled_at: true,
+              Event: { select: { name: true, id: true } },
             },
+          },
+        },
+        where: {
+          Applicant: {
+            cancel_token: input.cancelToken,
+          },
+        },
+      });
+      return result;
+    }),
+  cancelableParticipant: procedure
+    .input(cancelParticipantInputSchema)
+    .query(async ({ input }) => {
+      const result = await prisma.eventUser.findFirstOrThrow({
+        select: {
+          id: true,
+          Participant: {
+            select: {
+              canceled_at: true,
+              Event: { select: { name: true, id: true } },
+            },
+          },
+        },
+        where: {
+          Participant: {
+            cancel_token: input.cancelToken,
+          },
+        },
+      });
+      return result;
+    }),
+  cancelApplicant: procedure
+    .input(cancelApplicantInputSchema)
+    .mutation(async ({ input }) => {
+      const result = await prisma.$transaction(async (tx) => {
+        const { applicantId } = await tx.eventUser.findFirstOrThrow({
+          select: {
+            applicantId: true,
           },
           where: {
             Applicant: {
@@ -26,14 +71,31 @@ export const eventUsersRouter = router({
             },
           },
         });
-        return { type: input.type, ...result };
-      } else {
-        const result = await prisma.eventUser.findFirst({
+
+        if (!applicantId) throw new Error("applicantId is not found.");
+
+        return await tx.applicant.update({
           select: {
-            id: true,
-            Participant: {
-              select: { Event: { select: { name: true, id: true } } },
-            },
+            Event: { select: { name: true } },
+          },
+          where: {
+            id: applicantId,
+          },
+          data: {
+            canceled_at: new Date(),
+          },
+        });
+      });
+
+      return result;
+    }),
+  cancelParticipant: procedure
+    .input(cancelParticipantInputSchema)
+    .mutation(async ({ input }) => {
+      const result = await prisma.$transaction(async (tx) => {
+        const { participantId } = await tx.eventUser.findFirstOrThrow({
+          select: {
+            participantId: true,
           },
           where: {
             Participant: {
@@ -41,8 +103,23 @@ export const eventUsersRouter = router({
             },
           },
         });
-        return { type: input.type, ...result };
-      }
+
+        if (!participantId) throw new Error("participantId is not found.");
+
+        return await tx.participant.update({
+          select: {
+            Event: { select: { name: true } },
+          },
+          where: {
+            id: participantId,
+          },
+          data: {
+            canceled_at: new Date(),
+          },
+        });
+      });
+
+      return result;
     }),
   createParticipantOrApplicant: procedure
     .input(
@@ -147,7 +224,7 @@ export const eventUsersRouter = router({
           await appliedNotificationEmail({
             email: eventUserData.email,
             name: eventUserData.name,
-            cancelUrl: `https://exmaple.com/${cancel_token}`,
+            cancelUrl: `${getBaseUrl()}/events/cancel/applied/${cancel_token}`,
             event: {
               name: event.name,
               description: event.description ?? "",
@@ -175,7 +252,7 @@ export const eventUsersRouter = router({
           await participatingNotificationEmail({
             email: eventUserData.email,
             name: eventUserData.name,
-            cancelUrl: `https://exmaple.com/${cancel_token}`,
+            cancelUrl: `${getBaseUrl()}/events/cancel/participating/${cancel_token}`,
             event: {
               name: event.name,
               description: event.description ?? "",

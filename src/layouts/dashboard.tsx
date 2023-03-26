@@ -83,7 +83,11 @@ export const Dashboard: FC<Props> = ({
         overrides={{
           Root: {
             style: {
-              padding: `${theme.sizing.scale600} ${theme.sizing.scale1200}`,
+              // short hand is not recommended to avoid conflicts
+              paddingTop: theme.sizing.scale600,
+              paddingBottom: theme.sizing.scale600,
+              paddingLeft: theme.sizing.scale1200,
+              paddingRight: theme.sizing.scale1200,
             },
           },
         }}
