@@ -132,8 +132,8 @@ const EventDetailPage: NextPage = () => {
         <p>開始時間: {formatISO9075(new Date(data.start_time))}</p>
         <p>終了時間: {formatISO9075(new Date(data.end_time))}</p>
         <p>制限人数: {data.attendance_limit}</p>
-        <p>参加予定人数: {data.Participant.length}</p>
-        <p>キャンセル待ち人数: {data.Applicant.length}</p>
+        <p>参加予定人数: {data._count.Participant}</p>
+        <p>キャンセル待ち人数: {data._count.Applicant}</p>
 
         <Heading>参加予定者</Heading>
         <div className={css({ height: "100%", width: "100%" })}>

@@ -166,6 +166,30 @@ export const eventsRouter = router({
               cancel_token: true,
             },
           },
+          _count: {
+            select: {
+              Applicant: {
+                where: {
+                  canceled_at: null,
+                  OR: [
+                    {
+                      deadline: {
+                        gt: new Date(),
+                      },
+                    },
+                    {
+                      deadline: null,
+                    },
+                  ],
+                },
+              },
+              Participant: {
+                where: {
+                  canceled_at: null,
+                },
+              },
+            },
+          },
         },
         where: {
           id: input.id,
