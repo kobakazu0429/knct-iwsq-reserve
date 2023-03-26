@@ -34,6 +34,12 @@ class MyDocument extends Document<{ stylesheets: sheetT[] }> {
     return (
       <Html lang="ja">
         <Head>
+          <style>{`
+            body {
+              margin: 0px;
+              padding: 0px;
+            }
+          `}</style>
           {this.props.stylesheets.map((sheet, i) => (
             <style
               className="_styletron_hydrate_"

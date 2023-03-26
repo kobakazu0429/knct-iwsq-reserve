@@ -79,9 +79,19 @@ export const Dashboard: FC<Props> = ({
 
   return (
     <>
-      <HeaderNavigation>
+      <HeaderNavigation
+        overrides={{
+          Root: {
+            style: {
+              padding: `${theme.sizing.scale600} ${theme.sizing.scale1200}`,
+            },
+          },
+        }}
+      >
         <NavigationList $align={ALIGN.left}>
-          <NavigationItem>IWスクエア管理システム</NavigationItem>
+          <NavigationItem className={css({ paddingLeft: 0 })}>
+            IWスクエア管理システム
+          </NavigationItem>
         </NavigationList>
         <NavigationList $align={ALIGN.center} />
         <NavigationList $align={ALIGN.right}>

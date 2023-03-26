@@ -9,7 +9,6 @@ export const eventsRouter = router({
       z
         .object({
           id: z.string().optional(),
-          hidden: z.boolean().optional(),
         })
         .optional()
     )
@@ -23,11 +22,21 @@ export const eventsRouter = router({
           start_time: true,
           end_time: true,
           attendance_limit: true,
-          status: true,
           _count: {
             select: {
-              Applicant: true,
-              Participant: true,
+              Applicant: {
+                where: {
+                  canceled_at: null,
+                  deadline: {
+                    gt: new Date(),
+                  },
+                },
+              },
+              Participant: {
+                where: {
+                  canceled_at: null,
+                },
+              },
             },
           },
         },
@@ -73,8 +82,19 @@ export const eventsRouter = router({
           status: true,
           _count: {
             select: {
-              Applicant: true,
-              Participant: true,
+              Applicant: {
+                where: {
+                  canceled_at: null,
+                  deadline: {
+                    gt: new Date(),
+                  },
+                },
+              },
+              Participant: {
+                where: {
+                  canceled_at: null,
+                },
+              },
             },
           },
         },

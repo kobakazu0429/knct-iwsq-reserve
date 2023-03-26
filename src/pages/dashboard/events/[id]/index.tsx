@@ -117,14 +117,6 @@ const EventDetailPage: NextPage = () => {
     );
   }
 
-  const waitlingMembers = data.Applicant.filter((user) => !user.canceled_at);
-  const waitlingMembersCount = waitlingMembers.length;
-
-  const participantMembers = data.Participant.filter(
-    (user) => !user.canceled_at
-  );
-  const participantMembersCount = participantMembers.length;
-
   return (
     <Dashboard>
       <Heading>{data.name}</Heading>
@@ -140,8 +132,8 @@ const EventDetailPage: NextPage = () => {
         <p>開始時間: {formatISO9075(new Date(data.start_time))}</p>
         <p>終了時間: {formatISO9075(new Date(data.end_time))}</p>
         <p>制限人数: {data.attendance_limit}</p>
-        <p>参加予定人数: {participantMembersCount}</p>
-        <p>キャンセル待ち人数: {waitlingMembersCount}</p>
+        <p>参加予定人数: {data.Participant.length}</p>
+        <p>キャンセル待ち人数: {data.Applicant.length}</p>
 
         <Heading>参加予定者</Heading>
         <div className={css({ height: "100%", width: "100%" })}>
