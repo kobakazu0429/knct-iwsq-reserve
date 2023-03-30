@@ -1,6 +1,5 @@
 import { router, procedure } from "../trpc";
 import { type Prisma } from "@prisma/client";
-import { z } from "zod";
 import { nanoid } from "nanoid";
 import { formatISO9075 } from "date-fns";
 import { prisma } from "../../prisma";
@@ -13,6 +12,7 @@ import {
   cancelParticipantInputSchema,
 } from "../../prisma/eventUser";
 import { getBaseUrl } from "../../utils/url";
+import { createParticipantOrApplicantSchema } from "../../models/EventUser";
 
 export const eventUsersRouter = router({
   cancelableApplicant: procedure
@@ -122,37 +122,7 @@ export const eventUsersRouter = router({
       return result;
     }),
   createParticipantOrApplicant: procedure
-    .input(
-      z.object({
-        eventId: z.string(),
-        name: z.string(),
-        email: z.string().email(),
-        department: z.enum([
-          "M",
-          "E",
-          "C",
-          "A",
-          "S",
-          "GRADUATE",
-          "PARENT",
-          "TEACHER",
-          "OTHER",
-        ]),
-        grade: z.enum([
-          "FIRST",
-          "SECOND",
-          "THIRD",
-          "FOURTH",
-          "FIFTH",
-          "JUNIOR",
-          "SENIOR",
-          "GRADUATE",
-          "PARENT",
-          "TEACHER",
-          "OTHER",
-        ]),
-      })
-    )
+    .input(createParticipantOrApplicantSchema)
     .mutation(async ({ input }) => {
       return await prisma.$transaction(async (tx) => {
         const event = await tx.event.findUnique({

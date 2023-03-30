@@ -1,12 +1,6 @@
-import React, {
-  useState,
-  type FC,
-  type ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import type { FC, ComponentProps } from "react";
 import { useFormContext, Controller } from "react-hook-form";
+import { useStyletron } from "baseui";
 import { FormControl } from "baseui/form-control";
 import { Combobox as BaseUiCombobox } from "baseui/combobox";
 
@@ -15,8 +9,10 @@ type ComboboxType = ComponentProps<typeof BaseUiCombobox>;
 type Props<Option extends string = any> = {
   name: string;
   label: string;
-  options: Option[];
-  optionsValueMapper: Record<Option, string>;
+  options: Option[] | readonly Option[];
+  caption?: string;
+  errorsName: string;
+  onChnage?: (newLabel: string) => void;
 } & Omit<
   ComboboxType,
   | "name"
@@ -32,50 +28,57 @@ export const Combobox: FC<Props> = ({
   name,
   label,
   options,
-  optionsValueMapper,
+  caption = "",
+  errorsName,
   ...props
 }) => {
-  const { control, setValue, watch } = useFormContext();
-  const [comboboxLabel, setComboboxLabel] = useState<string | undefined>("");
-  const optionsValueMapperReversed = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(optionsValueMapper).map((kv) => kv.reverse())
-    );
-  }, [optionsValueMapper]);
-
-  const onChnage = useCallback(
-    (v: string) => {
-      setComboboxLabel(v);
-      setValue(name, optionsValueMapper[v]);
-    },
-    [setComboboxLabel, setValue, name, optionsValueMapper]
-  );
-
-  const formValue = watch(name);
-  useEffect(() => {
-    if (!options.includes(comboboxLabel)) {
-      setComboboxLabel(optionsValueMapperReversed[formValue]);
-    }
-  }, [formValue, options, comboboxLabel, optionsValueMapperReversed]);
+  const [css] = useStyletron();
+  const {
+    control,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <FormControl label={label}>
-          <BaseUiCombobox
-            inputRef={field.ref}
-            mapOptionToString={(option) => option as string}
-            value={comboboxLabel ?? ""}
-            onChange={onChnage}
-            // onBlur={field.onBlur}
-            options={options}
-            name={field.name}
-            {...props}
-          />
-        </FormControl>
-      )}
-    />
+    <div className={css({ width: "100%" })}>
+      <FormControl
+        label={label}
+        caption={
+          caption === "" ? (
+            // prevent Layout Shift without error
+            // eslint-disable-next-line no-irregular-whitespace
+            <span className={css({ userSelect: "none" })}>　</span>
+          ) : (
+            <span>{caption}</span>
+          )
+        }
+        error={
+          errors[errorsName]?.message && (
+            <span>{errors[errorsName]?.message as string | undefined}</span>
+          )
+        }
+      >
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <BaseUiCombobox
+              inputRef={field.ref}
+              mapOptionToString={(option) => option as string}
+              value={field.value}
+              onChange={(newLabel: string) => {
+                setValue(name, newLabel);
+                props.onChnage?.(newLabel);
+              }}
+              // onBlur={field.onBlur}
+              // @ts-expect-error
+              options={options}
+              name={field.name}
+              {...props}
+            />
+          )}
+        />
+      </FormControl>
+    </div>
   );
 };
