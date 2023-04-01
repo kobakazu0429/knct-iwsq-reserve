@@ -22,6 +22,7 @@ export type VerifySignaturConfig = {
    * @default 0
    */
   clockTolerance?: number;
+  noVerify?: boolean;
 };
 
 const verifyWithKey = async ({
@@ -75,6 +76,10 @@ export function verifySignature(
   config: VerifySignaturConfig
 ): NextApiHandler {
   return async (req: NextApiRequest, res: NextApiResponse) => {
+    if (config.noVerify) {
+      return handler(req, res);
+    }
+
     const signature = req.headers["upstash-signature"];
     if (!signature) {
       throw new Error("`Upstash-Signature` header is missing");
@@ -131,8 +136,9 @@ export const verifySignatureWithSigningKey = (
   }
 
   return verifySignature(handler, {
-    ...config,
+    clockTolerance: parseInt(process.env.QSTASH_CLOCK_TOLERANCE ?? "0", 10),
     currentSigningKey,
     nextSigningKey,
+    ...config,
   });
 };

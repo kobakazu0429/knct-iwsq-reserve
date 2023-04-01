@@ -2,6 +2,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { getSession } from "next-auth/react";
 import { type Role, userRoleHelper, userRoleExtender } from "../prisma/user";
+import { appRouter } from "./routers";
 
 export const createContext = async (opts: CreateNextContextOptions) => {
   const session = await getSession({ req: opts.req });
@@ -52,3 +53,5 @@ export const taProcedure = t.procedure.use(
   dashboardGuard("TEACHING_ASSISTANT")
 );
 export const authProcedure = t.procedure.use(dashboardGuard("GUEST"));
+
+export const trpcServerSide = () => appRouter.createCaller({ session: null });

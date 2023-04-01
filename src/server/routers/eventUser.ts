@@ -13,6 +13,10 @@ import {
 } from "../../prisma/eventUser";
 import { getBaseUrl } from "../../utils/url";
 import { createParticipantOrApplicantSchema } from "../../models/EventUser";
+import {
+  applicantsToParticipants,
+  applicantsToParticipantsInput,
+} from "../../service/EventUser";
 
 export const eventUsersRouter = router({
   cancelableApplicant: procedure
@@ -61,9 +65,13 @@ export const eventUsersRouter = router({
     .input(cancelApplicantInputSchema)
     .mutation(async ({ input }) => {
       const result = await prisma.$transaction(async (tx) => {
-        const { applicantId } = await tx.eventUser.findFirstOrThrow({
+        const eventUser = await tx.eventUser.findFirstOrThrow({
           select: {
-            applicantId: true,
+            Applicant: {
+              select: {
+                id: true,
+              },
+            },
           },
           where: {
             Applicant: {
@@ -71,6 +79,8 @@ export const eventUsersRouter = router({
             },
           },
         });
+
+        const applicantId = eventUser?.Applicant?.id;
 
         if (!applicantId) throw new Error("applicantId is not found.");
 
@@ -93,9 +103,9 @@ export const eventUsersRouter = router({
     .input(cancelParticipantInputSchema)
     .mutation(async ({ input }) => {
       const result = await prisma.$transaction(async (tx) => {
-        const { participantId } = await tx.eventUser.findFirstOrThrow({
+        const eventUser = await tx.eventUser.findFirstOrThrow({
           select: {
-            participantId: true,
+            Participant: { select: { id: true } },
           },
           where: {
             Participant: {
@@ -103,6 +113,8 @@ export const eventUsersRouter = router({
             },
           },
         });
+
+        const participantId = eventUser?.Participant?.id;
 
         if (!participantId) throw new Error("participantId is not found.");
 
@@ -235,5 +247,10 @@ export const eventUsersRouter = router({
           return eventUser;
         }
       });
+    }),
+  applicantsToParticipants: procedure
+    .input(applicantsToParticipantsInput)
+    .mutation(async ({ input }) => {
+      return applicantsToParticipants(input);
     }),
 });

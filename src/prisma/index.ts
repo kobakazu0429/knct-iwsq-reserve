@@ -8,7 +8,10 @@ declare global {
 }
 
 const _prisma = new PrismaClient({
-  log: ["query", "error", "info", "warn"],
+  log:
+    process.env.NODE_ENV === "development"
+      ? ["error", "info", "warn", "query"]
+      : ["error", "info", "warn"],
 })
   .$extends({
     result: {
@@ -89,3 +92,5 @@ const prisma = globalThis.prisma || _prisma;
 if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
 
 export { prisma };
+
+export type Prisma = typeof prisma;

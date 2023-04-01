@@ -45,41 +45,45 @@ enum Grade {
 }
 
 model EventUser {
-  id            String       @id @default(cuid())
-  department    Department
-  grade         Grade
-  name          String
-  email         String
-  mails         Mail[]
-  participantId String?
-  Participant   Participant? @relation(fields: [participantId], references: [id])
-  applicantId   String?
-  Applicant     Applicant?   @relation(fields: [applicantId], references: [id])
-  createdAt     DateTime     @default(now()) @map("created_at")
-  updatedAt     DateTime     @default(now()) @updatedAt @map("updated_at")
+  id          String       @id @default(cuid())
+  department  Department
+  grade       Grade
+  name        String
+  email       String
+  mails       Mail[]
+  Applicant   Applicant?
+  Participant Participant?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at")
 }
 
 model Applicant {
-  id           String      @id @default(cuid())
+  id           String    @id @default(cuid())
   canceled_at  DateTime?
   cancel_token String
   deadline     DateTime?
-  EventUser    EventUser[]
+  eventUserId  String    @unique
+  EventUser    EventUser @relation(fields: [eventUserId], references: [id])
   eventId      String
-  Event        Event       @relation(fields: [eventId], references: [id])
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @default(now()) @updatedAt @map("updated_at")
+  Event        Event     @relation(fields: [eventId], references: [id])
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([eventId, eventUserId])
 }
 
 model Participant {
-  id           String      @id @default(cuid())
+  id           String    @id @default(cuid())
   canceled_at  DateTime?
   cancel_token String
-  EventUser    EventUser[]
+  eventUserId  String    @unique
+  EventUser    EventUser @relation(fields: [eventUserId], references: [id])
   eventId      String
-  Event        Event       @relation(fields: [eventId], references: [id])
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @default(now()) @updatedAt @map("updated_at")
+  Event        Event     @relation(fields: [eventId], references: [id])
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([eventId, eventUserId])
 }
 
 model Mail {

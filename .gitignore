@@ -37,3 +37,6 @@ next-env.d.ts
 
 cockroach-data
 node1
+goroutine_dump
+heap_profiler
+inflight_trace_dump

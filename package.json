@@ -9,7 +9,9 @@
     "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "eslint \"./src/**/*.{js,ts,tsx}\" --fix",
     "lint:prettier": "prettier \"./src/**/*.{js,ts,tsx}\" --write",
-    "seed": "ts-node ./prisma/seed.ts"
+    "seed": "ts-node ./prisma/seed.ts",
+    "db:reset": "ts-node ./prisma/reset.ts",
+    "test": "FAKER_SEED=6777588418545671 vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.0.0",
@@ -42,8 +44,10 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@kobakazu0429/eslint-config-typescript-react": "^3.1.4",
     "@types/jsonwebtoken": "^9.0.1",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "vitest": "^0.29.8"
   }
 }
