@@ -2,5 +2,12 @@
   "extends": [
     "@kobakazu0429/eslint-config-typescript-react",
     "next/core-web-vitals"
-  ]
+  ],
+  "plugins": ["import-access"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "import-access/jsdoc": ["error"]
+  }
 }

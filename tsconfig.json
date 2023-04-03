@@ -14,7 +14,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noErrorTruncation": true
+    "plugins": [
+      {
+        "name": "eslint-plugin-import-access"
+      }
+    ]
   },
   "ts-node": {
     "compilerOptions": {
