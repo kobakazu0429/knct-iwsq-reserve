@@ -11,7 +11,8 @@
     "lint:prettier": "prettier \"./src/**/*.{js,ts,tsx}\" --write",
     "seed": "ts-node ./prisma/seed.ts",
     "db:reset": "ts-node ./prisma/reset.ts",
-    "test": "FAKER_SEED=6777588418545671 vitest run"
+    "test": "FAKER_SEED=6777588418545671 vitest run",
+    "test:watch": "FAKER_SEED=6777588418545671 vitest watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.0.0",

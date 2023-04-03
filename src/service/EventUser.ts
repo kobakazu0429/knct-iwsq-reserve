@@ -94,36 +94,53 @@ export const applicantsToParticipants = (
       Applicant: {
         cancel_token: string;
         deadline: Date | null;
+        Event: {
+          id: string;
+          name: string;
+          description: string | null;
+          place: string;
+          start_time: Date;
+          end_time: Date;
+        };
       } | null;
     }[] = [];
 
     for await (const event of shouldApplicantToParticipateEvents) {
       for await (const applicant of event.Applicant) {
-        noticeUsers.push(
-          await tx.eventUser.update({
-            where: {
-              id: applicant.EventUser.id,
+        const eventUser = await tx.eventUser.update({
+          where: {
+            id: applicant.EventUser.id,
+          },
+          data: {
+            Applicant: {
+              update: {
+                deadline: addHours(now, 6),
+              },
             },
-            data: {
-              Applicant: {
-                update: {
-                  deadline: addHours(now, 6),
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            Applicant: {
+              select: {
+                cancel_token: true,
+                deadline: true,
+                Event: {
+                  select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    place: true,
+                    start_time: true,
+                    end_time: true,
+                  },
                 },
               },
             },
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              Applicant: {
-                select: {
-                  cancel_token: true,
-                  deadline: true,
-                },
-              },
-            },
-          })
-        );
+          },
+        });
+        noticeUsers.push(eventUser);
       }
     }
 
