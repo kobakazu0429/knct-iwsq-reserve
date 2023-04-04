@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { dedent } from "ts-dedent";
 import { FOOTER_MESSAGE } from "./constants";
+import { stringOrDateWithTransform } from "../libs/zod/stringOrDateWithTransform";
 
 export const applicantsToParticipantsMailInputSchema = z.object({
   name: z.string(),
@@ -12,8 +13,8 @@ export const applicantsToParticipantsMailInputSchema = z.object({
     .optional()
     .transform((v) => v ?? ""),
   place: z.string(),
-  start_time: z.string(),
-  end_time: z.string(),
+  start_time: stringOrDateWithTransform,
+  end_time: stringOrDateWithTransform,
   cancel_url: z.string(),
   participant_url: z.string(),
   deadline: z.string(),

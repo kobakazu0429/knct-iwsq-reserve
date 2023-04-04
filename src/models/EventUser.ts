@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { match, P } from "ts-pattern";
 import type { Department } from "@prisma/client";
 export { Department, Grade } from "@prisma/client";
@@ -31,64 +30,6 @@ export const departmentLabelToValue = {
 
 export type DepartmentLabelToValue =
   (typeof departmentLabelToValue)[DepartmentLabels];
-
-const commonSchema = z.object({
-  eventId: z.string(),
-  name: z.string(),
-  email: z.string().email(),
-});
-
-export const createParticipantOrApplicantSchema = z.union([
-  commonSchema.omit({ email: true }).merge(
-    z.object({
-      email: z
-        .string()
-        // .email()
-        .endsWith(
-          "@kurekosen-ac.jp",
-          "学生は @kurekosen-ac.jp で終わるメールアドレスを入力してください。"
-        ),
-      department: z.enum(["M", "E", "C", "A", "S"]),
-      grade: z.enum([
-        "FIRST",
-        "SECOND",
-        "THIRD",
-        "FOURTH",
-        "FIFTH",
-        "JUNIOR",
-        "SENIOR",
-      ]),
-    })
-  ),
-  commonSchema.merge(
-    z.object({
-      department: z.literal("GRADUATE"),
-      grade: z.literal("GRADUATE"),
-    })
-  ),
-  commonSchema.merge(
-    z.object({
-      department: z.literal("PARENT"),
-      grade: z.literal("PARENT"),
-    })
-  ),
-  commonSchema.merge(
-    z.object({
-      department: z.literal("TEACHER"),
-      grade: z.literal("TEACHER"),
-    })
-  ),
-  commonSchema.merge(
-    z.object({
-      department: z.literal("OTHER"),
-      grade: z.literal("OTHER"),
-    })
-  ),
-]);
-
-export type CreateParticipantOrApplicantSchema = z.infer<
-  typeof createParticipantOrApplicantSchema
->;
 
 export const makeGradeOptions = (department: Department) => {
   return match(department)

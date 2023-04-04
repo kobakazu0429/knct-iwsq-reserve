@@ -7,9 +7,9 @@ import { useTrpc } from "../../../../trpc";
 import { Link } from "../../../../components/baseui/Link";
 import { useSnackbar, DURATION } from "baseui/snackbar";
 import { Button } from "baseui/button";
-import { cancelApplicantInputSchema } from "../../../../prisma/eventUser";
 import { BaseLayout } from "../../../../layouts/base";
 import { useCallback } from "react";
+import { cancelableApplicantInput } from "../../../../service/EventUser";
 
 const sleep = (ms: number) => {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -23,8 +23,8 @@ const AppliedEventCancelPage: NextPage = () => {
   const { data, error, isLoading } = useSWR(
     `/events/cancel/applied/${router.query.cancelToken}`,
     () => {
-      const input = cancelApplicantInputSchema.parse(router.query);
-      return trpc.eventUsers.cancelableApplicant.query(input);
+      const input = cancelableApplicantInput.parse(router.query);
+      return trpc.public.eventUsers.cancelableApplicant.query(input);
     }
   );
 
@@ -34,7 +34,7 @@ const AppliedEventCancelPage: NextPage = () => {
     try {
       // アニメーションと作成の認知のために最低でも1秒は待つ
       const [result] = await Promise.allSettled([
-        trpc.eventUsers.cancelApplicant.mutate({
+        trpc.public.eventUsers.cancelApplicant.mutate({
           cancelToken: router.query.cancelToken as string,
         }),
         sleep(1000),
@@ -55,7 +55,7 @@ const AppliedEventCancelPage: NextPage = () => {
     dequeue,
     enqueue,
     router.query.cancelToken,
-    trpc.eventUsers.cancelApplicant,
+    trpc.public.eventUsers.cancelApplicant,
   ]);
 
   const event = data?.Applicant?.Event;

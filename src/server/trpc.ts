@@ -2,7 +2,6 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { getSession } from "next-auth/react";
 import { type Role, userRoleHelper, userRoleExtender } from "../prisma/user";
-import { appRouter } from "./routers";
 
 export const createContext = async (opts: CreateNextContextOptions) => {
   const session = await getSession({ req: opts.req });
@@ -13,7 +12,7 @@ export const createContext = async (opts: CreateNextContextOptions) => {
 
 const t = initTRPC.context<typeof createContext>().create();
 
-export const dashboardGuard = (leastRole: Role) => {
+const roleGuard = (leastRole: Role) => {
   return t.middleware(({ next, ctx }) => {
     const role = ctx.session?.user?.role;
     const roleHelper = userRoleHelper(role);
@@ -46,12 +45,7 @@ export const dashboardGuard = (leastRole: Role) => {
 };
 
 export const router = t.router;
-export const mergeRouters = t.mergeRouters;
-export const procedure = t.procedure;
-export const adminProcedure = t.procedure.use(dashboardGuard("ADMIN"));
-export const taProcedure = t.procedure.use(
-  dashboardGuard("TEACHING_ASSISTANT")
-);
-export const authProcedure = t.procedure.use(dashboardGuard("GUEST"));
-
-export const trpcServerSide = () => appRouter.createCaller({ session: null });
+export const publicProcedure = t.procedure;
+export const authProcedure = publicProcedure.use(roleGuard("GUEST"));
+export const taProcedure = publicProcedure.use(roleGuard("TEACHING_ASSISTANT"));
+export const adminProcedure = publicProcedure.use(roleGuard("ADMIN"));

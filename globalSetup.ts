@@ -1,20 +1,15 @@
-import * as util from "node:util";
 import * as childProcess from "node:child_process";
-import { beforeAll, afterAll, afterEach } from "vitest";
 import { faker } from "@faker-js/faker";
-import { TRUNCATE } from "./prisma/reset";
-
-const exec = util.promisify(childProcess.exec);
-
-const seed = process.env.FAKER_SEED
-  ? faker.seed(+process.env.FAKER_SEED)
-  : faker.seed();
-
-console.log(`faker's seed: ${seed}`);
 
 let pid: number | undefined = undefined;
 
-beforeAll(async () => {
+export const setup = async () => {
+  const seed = process.env.FAKER_SEED
+    ? faker.seed(+process.env.FAKER_SEED)
+    : faker.seed();
+
+  console.log(`faker's seed: ${seed}`);
+
   const cockroach = childProcess.spawn("cockroach", [
     "start-single-node",
     "--insecure",
@@ -25,22 +20,17 @@ beforeAll(async () => {
 
   await new Promise<void>((resolve) => {
     cockroach.stdout.on("data", (data) => {
+      console.log(data.toString());
       if (data.toString().includes("CockroachDB node starting at ")) {
         pid = cockroach.pid;
         resolve();
       }
     });
   });
+};
 
-  await exec("yarn prisma db push");
-});
-
-afterEach(async () => {
-  await TRUNCATE();
-});
-
-afterAll(() => {
+export const teardown = () => {
   if (pid) {
     process.kill(pid);
   }
-});
+};

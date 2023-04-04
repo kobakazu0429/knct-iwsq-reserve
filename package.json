@@ -11,16 +11,17 @@
     "lint:prettier": "prettier \"./src/**/*.{js,ts,tsx}\" --write",
     "seed": "ts-node ./prisma/seed.ts",
     "db:reset": "ts-node ./prisma/reset.ts",
-    "test": "FAKER_SEED=6777588418545671 vitest run",
-    "test:watch": "FAKER_SEED=6777588418545671 vitest watch"
+    "test": "FAKER_SEED=6777588418545671 vitest run --no-threads",
+    "test:watch": "FAKER_SEED=6777588418545671 vitest watch --no-threads",
+    "coverage": "FAKER_SEED=6777588418545671 vitest run --coverage --no-threads"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.0.0",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.11.0",
     "@sendgrid/mail": "^7.7.0",
-    "@trpc/client": "^10.15.0",
-    "@trpc/server": "^10.15.0",
+    "@trpc/client": "^10.18.0",
+    "@trpc/server": "^10.18.0",
     "@types/node": "18.14.2",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",

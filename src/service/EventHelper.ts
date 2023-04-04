@@ -9,6 +9,10 @@ export const EventHelper = {
   ) {
     const organizerId = args?.organizerId ?? (await UserHelper.create()).id;
 
+    if (args?.organizerId) {
+      delete args?.organizerId;
+    }
+
     return await prisma.event.create({
       data: {
         name: faker.random.word(),

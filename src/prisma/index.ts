@@ -2,11 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { match, P } from "ts-pattern";
 import { isAfter, isBefore } from "date-fns";
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: typeof _prisma | undefined;
-}
-
 const _prisma = new PrismaClient({
   log:
     process.env.NODE_ENV === "development"
@@ -87,6 +82,11 @@ const _prisma = new PrismaClient({
       },
     },
   });
+
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: typeof _prisma | undefined;
+}
 
 const prisma = globalThis.prisma || _prisma;
 if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;

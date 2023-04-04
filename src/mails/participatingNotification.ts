@@ -3,8 +3,9 @@
 import { z } from "zod";
 import { dedent } from "ts-dedent";
 import { FOOTER_MESSAGE } from "./constants";
+import { stringOrDateWithTransform } from "../libs/zod/stringOrDateWithTransform";
 
-export const appliedNotificationMailInputSchema = z.object({
+export const participatingNotificationMailInputSchema = z.object({
   name: z.string(),
   event_name: z.string(),
   description: z
@@ -12,14 +13,15 @@ export const appliedNotificationMailInputSchema = z.object({
     .optional()
     .transform((v) => v ?? ""),
   place: z.string(),
-  start_time: z.string(),
-  end_time: z.string(),
+  start_time: stringOrDateWithTransform,
+  end_time: stringOrDateWithTransform,
   cancel_url: z.string(),
 });
 
-export const appliedNotificationMailSubject = "参加申し込みが完了しました！";
+export const participatingNotificationMailSubject =
+  "参加申し込みが完了しました！";
 
-export const appliedNotificationMailBody = dedent`
+export const participatingNotificationMailBody = dedent`
 {{name}} さん
 
 インキュベーションスクエアです。
