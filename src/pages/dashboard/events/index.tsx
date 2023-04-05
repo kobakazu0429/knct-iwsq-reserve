@@ -13,7 +13,7 @@ import { Link } from "../../../components/baseui/Link";
 import { useTrpc } from "../../../trpc";
 import { AppRouterOutput } from "../../../server/routers";
 
-type Event = AppRouterOutput["events"]["getWithAuth"][number];
+type Event = AppRouterOutput["auth"]["events"]["list"][number];
 
 const columns = [
   StringColumn({
@@ -65,7 +65,7 @@ const EventsPage: NextPage = () => {
   const [css] = useStyletron();
   const trpc = useTrpc();
   const { data, error, isLoading } = useSWR("events", () => {
-    return trpc.events.getWithAuth.query();
+    return trpc.auth.events.list.query();
   });
 
   if (error) {

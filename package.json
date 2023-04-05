@@ -17,9 +17,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.0.0",
+    "@kobakazu0429/sendgrid-mail": "https://gitpkg.now.sh/kobakazu0429/sendgrid-nodejs/packages/mail?main",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.11.0",
-    "@sendgrid/mail": "^7.7.0",
     "@trpc/client": "^10.18.0",
     "@trpc/server": "^10.18.0",
     "@types/node": "18.14.2",

@@ -1,4 +1,4 @@
-import { authProcedure } from "../../trpc";
+import { authProcedure, router } from "../../trpc";
 import {
   getEvent,
   getEventInput,
@@ -13,7 +13,7 @@ import {
 /**
  * @package
  */
-export const eventsRouter = {
+export const eventsRouter = router({
   get: authProcedure.input(getEventInput).query(async ({ ctx, input }) => {
     return getEvent({
       eventId: input.eventId,
@@ -28,15 +28,16 @@ export const eventsRouter = {
       hidden: input?.hidden,
       organizerId: ctx.session.user.roleHelper.isGuest
         ? ctx.session.user.id
-        : input.organizerId,
+        : input?.organizerId,
     });
   }),
 
   create: authProcedure
-    .input(createEventInput)
+    .input(createEventInput.omit({ organizerId: true }))
     .mutation(async ({ ctx, input }) => {
       return createEvent({
         ...input,
+        organizerId: ctx.session.user.id,
         hidden: ctx.session.user.roleHelper.isGuest
           ? true
           : input.hidden ?? true,
@@ -61,4 +62,4 @@ export const eventsRouter = {
         withApprovalRequest: ctx.session.user.roleHelper.isGuest,
       });
     }),
-};
+});

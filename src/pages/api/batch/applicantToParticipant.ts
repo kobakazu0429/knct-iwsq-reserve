@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verifySignatureWithSigningKey } from "../../../libs/qstash/verify";
-import { trpcServerSide } from "../../../server/trpc";
 import { sendgrid } from "../../../service/SendGrid";
+import { trpcServerSide } from "../../../trpc";
 import {
   applicantsToParticipantsMailInputSchema,
   applicantsToParticipantsMailBody,

@@ -152,10 +152,12 @@ export const getEvent = async (input: z.infer<typeof getEventInput>) => {
   return result;
 };
 
-export const listEventsInput = z.object({
-  hidden: z.boolean().optional(),
-  organizerId: z.string().optional(),
-});
+export const listEventsInput = z
+  .object({
+    hidden: z.boolean().optional(),
+    organizerId: z.string().optional(),
+  })
+  .optional();
 
 export const listEvents = async (input: z.infer<typeof listEventsInput>) => {
   const result = await prisma.event.findMany({
@@ -193,8 +195,8 @@ export const listEvents = async (input: z.infer<typeof listEventsInput>) => {
       },
     },
     where: {
-      hidden: input.hidden,
-      organizerId: input.organizerId,
+      hidden: input?.hidden,
+      organizerId: input?.organizerId,
     },
   });
 

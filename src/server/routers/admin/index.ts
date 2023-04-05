@@ -1,8 +1,9 @@
+import { router } from "../../trpc";
 import { usersRouter } from "./Users";
 
 /**
  * @package
  */
-export const adminRouter = {
+export const adminRouter = router({
   users: usersRouter,
-};
+});

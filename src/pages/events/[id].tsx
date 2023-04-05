@@ -19,13 +19,15 @@ const EventDetailPage: NextPage = () => {
   const trpc = useTrpc();
   const snackbar = useSnackbar();
   const eventId = router.query.id;
-  const { data, error, isLoading } = useSWR(`/events/${eventId}`, () => {
-    return trpc.events.get.query({ id: eventId as string });
+  const {
+    data: event,
+    error,
+    isLoading,
+  } = useSWR(`/events/${eventId}`, () => {
+    return trpc.public.events.get.query({ eventId: eventId as string });
   });
 
-  if (!data) return null;
-
-  const event = data[0];
+  if (!event) return null;
 
   return (
     <BaseLayout isLoading={isLoading} error={error}>

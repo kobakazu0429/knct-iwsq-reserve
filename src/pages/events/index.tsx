@@ -7,7 +7,7 @@ import { useTrpc } from "../../trpc";
 export default function Events() {
   const trpc = useTrpc();
   const { data, error, isLoading } = useSWR("/events", () => {
-    return trpc.events.get.query();
+    return trpc.public.events.list.query();
   });
 
   if (!data) return null;

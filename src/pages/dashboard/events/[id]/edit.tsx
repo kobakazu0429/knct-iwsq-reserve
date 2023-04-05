@@ -14,22 +14,34 @@ const EventEditPage: NextPage = () => {
   const trpc = useTrpc();
   const snackbar = useSnackbar();
 
-  const { data, error, isLoading } = useSWR(
-    `/dashboard/events/${router.query.id}/edit`,
-    () => {
-      return trpc.events.getWithAuth.query({ id: router.query.id as string });
-    }
-  );
+  const {
+    data: event,
+    error,
+    isLoading,
+  } = useSWR(`/dashboard/events/${router.query.id}/edit`, () => {
+    return trpc.auth.events.get.query({ eventId: router.query.id as string });
+  });
 
-  if (!router.query.id || Array.isArray(router.query.id) || !data) {
+  if (isLoading) {
+    return (
+      <Dashboard>
+        <p>読み込み中です。</p>
+      </Dashboard>
+    );
+  }
+
+  if (!router.query.id || Array.isArray(router.query.id) || !event) {
     return <Dashboard>イベントが見つかりませんでした。</Dashboard>;
   }
 
-  if (data?.length > 1) {
-    return <Dashboard>イベントが複数見つかりました。</Dashboard>;
+  if (error) {
+    return (
+      <Dashboard>
+        <p>エラーが発生しました。</p>
+        <div>{error}</div>
+      </Dashboard>
+    );
   }
-
-  const event = data[0];
 
   return (
     <Dashboard>

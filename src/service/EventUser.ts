@@ -207,8 +207,12 @@ export const createParticipantOrApplicantInput = z.union([
   ),
 ]);
 
+export type CreateParticipantOrApplicantInput = z.infer<
+  typeof createParticipantOrApplicantInput
+>;
+
 export const createParticipantOrApplicant = async (
-  input: z.infer<typeof createParticipantOrApplicantInput>
+  input: CreateParticipantOrApplicantInput
 ) => {
   const result = await prisma.$transaction(async (tx) => {
     const event = await tx.event.findUnique({

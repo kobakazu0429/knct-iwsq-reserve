@@ -1,8 +1,9 @@
+import { router } from "../../trpc";
 import { eventsRouter } from "./Event";
 
 /**
  * @package
  */
-export const authRouter = {
+export const authRouter = router({
   events: eventsRouter,
-};
+});

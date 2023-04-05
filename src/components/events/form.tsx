@@ -13,7 +13,7 @@ import { PlainButtonGroup } from "../baseui/PlainButtonGroup";
 import { userRoleHelper } from "../../prisma/user";
 
 interface FormValues {
-  id?: string;
+  id: string;
   name: string;
   description?: string;
   place: string;
@@ -39,7 +39,7 @@ export const handleSubmitCreate = ({ enqueue, dequeue }: SnackbarFunction) => {
         try {
           // アニメーションと作成の認知のために最低でも1秒は待つ
           const [result] = await Promise.allSettled([
-            trpc.events.create.mutate({
+            trpc.auth.events.create.mutate({
               name: data.name,
               description: data.description,
               place: data.place,
@@ -74,8 +74,9 @@ export const handleSubmitUpdate = ({ enqueue, dequeue }: SnackbarFunction) => {
         try {
           // アニメーションと更新の認知のために最低でも1秒は待つ
           const [result] = await Promise.allSettled([
-            trpc.events.update.mutate({
+            trpc.auth.events.update.mutate({
               ...data,
+              eventId: data.id,
               published_at: data.published_at ?? data.hidden ? "" : new Date(),
             }),
             sleep(1000),

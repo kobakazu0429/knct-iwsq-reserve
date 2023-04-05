@@ -1,4 +1,4 @@
-import { adminProcedure } from "../../trpc";
+import { adminProcedure, router } from "../../trpc";
 import {
   updateRoles,
   updateRolesInput,
@@ -8,7 +8,7 @@ import {
 /**
  * @package
  */
-export const usersRouter = {
+export const usersRouter = router({
   list: adminProcedure.query(async () => {
     return usersList();
   }),
@@ -16,4 +16,4 @@ export const usersRouter = {
   update: adminProcedure.input(updateRolesInput).mutation(async ({ input }) => {
     return updateRoles(input);
   }),
-};
+});

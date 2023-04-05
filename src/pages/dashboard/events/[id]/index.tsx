@@ -11,22 +11,22 @@ import { useTrpc } from "../../../../trpc";
 import { Dashboard } from "../../../../layouts/dashboard";
 import { Link } from "../../../../components/baseui/Link";
 
-type Event = AppRouterOutput["events"]["detailById"];
+type Event = AppRouterOutput["auth"]["events"]["get"];
 type Applicant = NonNullable<Event>["Applicant"][number];
 type Participant = NonNullable<Event>["Participant"][number];
 
 const applicantColumns = [
   StringColumn({
     title: "所属",
-    mapDataToValue: (data: Applicant) => data.EventUser[0].affiliation,
+    mapDataToValue: (data: Applicant) => data.EventUser.affiliation,
   }),
   StringColumn({
     title: "名前",
-    mapDataToValue: (data: Applicant) => data.EventUser[0].name,
+    mapDataToValue: (data: Applicant) => data.EventUser.name,
   }),
   StringColumn({
     title: "メールアドレス",
-    mapDataToValue: (data: Applicant) => data.EventUser[0].email,
+    mapDataToValue: (data: Applicant) => data.EventUser.email,
   }),
   StringColumn({
     title: "キャンセルトークン",
@@ -45,27 +45,27 @@ const applicantColumns = [
   StringColumn({
     title: "登録日時",
     mapDataToValue: (data: Applicant) =>
-      formatISO9075(new Date(data.EventUser[0].createdAt)),
+      formatISO9075(new Date(data.EventUser.createdAt)),
   }),
   StringColumn({
     title: "更新日時",
     mapDataToValue: (data: Applicant) =>
-      formatISO9075(new Date(data.EventUser[0].updatedAt)),
+      formatISO9075(new Date(data.EventUser.updatedAt)),
   }),
 ];
 
 const participantColumns = [
   StringColumn({
     title: "所属",
-    mapDataToValue: (data: Participant) => data.EventUser[0].affiliation,
+    mapDataToValue: (data: Participant) => data.EventUser.affiliation,
   }),
   StringColumn({
     title: "名前",
-    mapDataToValue: (data: Participant) => data.EventUser[0].name,
+    mapDataToValue: (data: Participant) => data.EventUser.name,
   }),
   StringColumn({
     title: "メールアドレス",
-    mapDataToValue: (data: Participant) => data.EventUser[0].email,
+    mapDataToValue: (data: Participant) => data.EventUser.email,
   }),
   StringColumn({
     title: "キャンセルトークン",
@@ -79,12 +79,12 @@ const participantColumns = [
   StringColumn({
     title: "登録日時",
     mapDataToValue: (data: Participant) =>
-      formatISO9075(new Date(data.EventUser[0].createdAt)),
+      formatISO9075(new Date(data.EventUser.createdAt)),
   }),
   StringColumn({
     title: "更新日時",
     mapDataToValue: (data: Participant) =>
-      formatISO9075(new Date(data.EventUser[0].updatedAt)),
+      formatISO9075(new Date(data.EventUser.updatedAt)),
   }),
 ];
 
@@ -93,7 +93,7 @@ const EventDetailPage: NextPage = () => {
   const router = useRouter();
   const trpc = useTrpc();
   const { data, error, isLoading } = useSWR(`/event/${router.query.id}`, () => {
-    return trpc.events.detailById.query({ id: router.query.id as string });
+    return trpc.auth.events.get.query({ eventId: router.query.id as string });
   });
 
   if (isLoading) {

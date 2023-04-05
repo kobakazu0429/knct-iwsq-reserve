@@ -1,5 +1,5 @@
-import { default as __sendgrid } from "@sendgrid/mail";
-import { Client } from "@sendgrid/client";
+import { default as __sendgrid } from "@kobakazu0429/sendgrid-mail";
+import { Client } from "@kobakazu0429/sendgrid-client";
 
 interface Personalization {
   to: string;

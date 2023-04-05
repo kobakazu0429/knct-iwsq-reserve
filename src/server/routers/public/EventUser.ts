@@ -1,5 +1,5 @@
 import { match } from "ts-pattern";
-import { publicProcedure } from "../../trpc";
+import { publicProcedure, router } from "../../trpc";
 import { getBaseUrl } from "./../../../utils/url";
 import { sendgrid } from "../../../service/SendGrid";
 import {
@@ -30,7 +30,7 @@ import {
 /**
  * @package
  */
-export const eventUsersRouter = {
+export const eventUsersRouter = router({
   cancelableApplicant: publicProcedure
     .input(cancelableApplicantInput)
     .query(async ({ input }) => {
@@ -114,4 +114,4 @@ export const eventUsersRouter = {
     .mutation(async ({ input }) => {
       return applicantsToParticipants(input);
     }),
-};
+});

@@ -13,7 +13,7 @@ import { useTrpc } from "../../../trpc";
 import { type Role } from "../../../prisma/user";
 import { AppRouterOutput } from "../../../server/routers";
 
-type User = AppRouterOutput["users"]["get"][number];
+type User = AppRouterOutput["admin"]["users"]["list"][number];
 
 const columns = [
   StringColumn({
@@ -46,7 +46,7 @@ const UsersPage: NextPage = () => {
   const [css] = useStyletron();
   const trpc = useTrpc();
   const { data, error, isLoading, mutate } = useSWR("users", () => {
-    return trpc.users.get.query();
+    return trpc.admin.users.list.query();
   });
 
   if (error) {
@@ -58,9 +58,9 @@ const UsersPage: NextPage = () => {
   }, [data]);
 
   const updateRole = useCallback(
-    async (inputs: { id: string; role: Role }[]) => {
-      const result = await trpc.users.update.mutate(inputs);
-      await mutate(result.data);
+    async (input: { id: string[]; role: Role }) => {
+      await trpc.admin.users.update.mutate(input);
+      await mutate();
     },
     [mutate, trpc]
   );
@@ -69,56 +69,40 @@ const UsersPage: NextPage = () => {
     {
       label: "DENYに変更する",
       onClick: async ({ selection, clearSelection }) => {
-        const inputs = selection.map(
-          (r) =>
-            ({
-              id: r.id as string,
-              role: "DENY",
-            } as const)
-        );
-        await updateRole(inputs);
+        await updateRole({
+          id: selection.map((s) => s.id as string),
+          role: "DENY",
+        });
         clearSelection();
       },
     },
     {
       label: "ゲストに変更する",
       onClick: async ({ selection, clearSelection }) => {
-        const inputs = selection.map(
-          (r) =>
-            ({
-              id: r.id as string,
-              role: "GUEST",
-            } as const)
-        );
-        await updateRole(inputs);
+        await updateRole({
+          id: selection.map((s) => s.id as string),
+          role: "GUEST",
+        });
         clearSelection();
       },
     },
     {
       label: "TAに変更する",
       onClick: async ({ selection, clearSelection }) => {
-        const inputs = selection.map(
-          (r) =>
-            ({
-              id: r.id as string,
-              role: "TEACHING_ASSISTANT",
-            } as const)
-        );
-        await updateRole(inputs);
+        await updateRole({
+          id: selection.map((s) => s.id as string),
+          role: "TEACHING_ASSISTANT",
+        });
         clearSelection();
       },
     },
     {
       label: "ADMINに変更する",
       onClick: async ({ selection, clearSelection }) => {
-        const inputs = selection.map(
-          (r) =>
-            ({
-              id: r.id as string,
-              role: "ADMIN",
-            } as const)
-        );
-        await updateRole(inputs);
+        await updateRole({
+          id: selection.map((s) => s.id as string),
+          role: "ADMIN",
+        });
         clearSelection();
       },
     },

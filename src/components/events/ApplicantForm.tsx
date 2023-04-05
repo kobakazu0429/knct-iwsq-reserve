@@ -9,8 +9,6 @@ import { type Trpc } from "../../trpc";
 import { Input } from "../baseui/input";
 import { Combobox } from "../baseui/Combobox";
 import {
-  createParticipantOrApplicantSchema,
-  type CreateParticipantOrApplicantSchema,
   makeGradeOptions,
   departmentLabels,
   departmentLabelToValue,
@@ -18,6 +16,7 @@ import {
   type Department,
   Grade,
 } from "../../models/EventUser";
+import { createParticipantOrApplicantInput } from "../../service/EventUser";
 
 interface FormValues {
   eventId: string;
@@ -38,16 +37,18 @@ const sleep = (ms: number) => {
 export const handleSubmitApply = ({ enqueue, dequeue }: SnackbarFunction) => {
   return (trpc: Trpc) => {
     return (router: NextRouter) => {
-      return async (data: CreateParticipantOrApplicantSchema) => {
+      return async (data: any) => {
         enqueue(
           { message: "参加申し込み中です", progress: true },
           DURATION.infinite
         );
 
         try {
+          const parsed = createParticipantOrApplicantInput.parse(data);
+
           // アニメーションと作成の認知のために最低でも1秒は待つ
           const [result] = await Promise.allSettled([
-            trpc.eventUsers.createParticipantOrApplicant.mutate(data),
+            trpc.public.eventUsers.createParticipantOrApplicant.mutate(parsed),
             sleep(1000),
           ]);
           console.log(result);
@@ -110,6 +111,7 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
     if (
       typeof gradeComboboxLabel === "undefined" ||
       gradeComboboxLabel === "" ||
+      // @ts-ignore
       gradeComboboxLabels.includes(gradeComboboxLabel)
     ) {
       return;
@@ -157,7 +159,7 @@ export const ApplicantForm: FC<Props> = ({ defaultValues, onSubmit }) => {
       eventId: "",
       ...defaultValues,
     },
-    resolver: zodResolver(createParticipantOrApplicantSchema),
+    resolver: zodResolver(createParticipantOrApplicantInput),
   });
 
   return (

@@ -1,4 +1,4 @@
-import { publicProcedure } from "../../trpc";
+import { publicProcedure, router } from "../../trpc";
 import {
   getPublicEvent,
   getPublicEventInput,
@@ -8,7 +8,7 @@ import {
 /**
  * @package
  */
-export const eventsRouter = {
+export const eventsRouter = router({
   get: publicProcedure.input(getPublicEventInput).query(async ({ input }) => {
     return getPublicEvent({
       eventId: input.eventId,
@@ -18,4 +18,4 @@ export const eventsRouter = {
   list: publicProcedure.query(async () => {
     return listPublicEvents();
   }),
-};
+});
