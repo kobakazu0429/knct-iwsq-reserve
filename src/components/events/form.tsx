@@ -148,7 +148,9 @@ export const EventEditor: FC<Props> = ({ defaultValues, onSubmit }) => {
           <Button kind="secondary" disabled>
             保存する
           </Button>
-          <Button type="submit">{submitButtonText}</Button>
+          <Button type="submit" disabled={isGuest}>
+            {submitButtonText}
+          </Button>
         </PlainButtonGroup>
       </form>
     </FormProvider>
