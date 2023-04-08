@@ -137,6 +137,8 @@ export const EventEditor: FC<Props> = ({ defaultValues, onSubmit }) => {
           name="attendance_limit"
           type="number"
           required
+          min={1}
+          max={255}
         />
 
         <ComposedDateTimeRangePickers />
