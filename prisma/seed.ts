@@ -24,6 +24,7 @@ const seed_events = async ([alice, bob]: User[]) => {
     {
       name: "3d printer lecture",
       place: "square",
+      description: "",
       attendance_limit: 2,
       published_at: new Date("2023-01-01T12:00:00.000Z"),
       start_time: new Date("2023-01-01T13:00:00.000Z"),
@@ -65,6 +66,7 @@ const seed_events = async ([alice, bob]: User[]) => {
     {
       name: "laser cutter lecture",
       place: "square",
+      description: "",
       attendance_limit: 1,
       published_at: new Date("2023-01-01T12:00:00.000Z"),
       start_time: new Date("2023-01-01T16:00:00.000Z"),
@@ -91,6 +93,7 @@ const seed_events = async ([alice, bob]: User[]) => {
     {
       name: "cnc lecture",
       place: "square",
+      description: "",
       attendance_limit: 2,
       published_at: new Date("2023-01-01T12:00:00.000Z"),
       start_time: new Date("2023-01-01T18:00:00.000Z"),

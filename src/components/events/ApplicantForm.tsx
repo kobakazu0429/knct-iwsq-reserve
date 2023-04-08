@@ -88,6 +88,7 @@ const DepartmentCombobox: FC<ComboboxProps> = ({ onChange }) => {
       options={departmentLabels}
       errorsName="department"
       onChnage={(newLabel) => {
+        // @ts-ignore
         setValue("department", departmentLabelToValue[newLabel]);
         onChange();
       }}
@@ -101,6 +102,7 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
 
   const [gradeComboboxLabels, gradeLabelToValue] = useMemo(() => {
     const result = makeGradeOptions(
+      // @ts-ignore
       departmentLabelToValue[departmentComboboxLabelValue]
     );
     return result;
@@ -122,6 +124,7 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
 
     const newGradeComboboxLabel = gradeComboboxLabels[0]!;
     setValue("gradeComboboxLabel", newGradeComboboxLabel);
+    // @ts-ignore
     setValue("grade", gradeLabelToValue[newGradeComboboxLabel]);
     onChange();
   }, [
@@ -140,6 +143,7 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
       options={gradeComboboxLabels}
       errorsName="grade"
       onChnage={(newLabel) => {
+        // @ts-ignore
         setValue("grade", gradeLabelToValue[newLabel]);
         onChange();
       }}
