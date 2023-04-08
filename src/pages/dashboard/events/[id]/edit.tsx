@@ -7,7 +7,7 @@ import { Dashboard } from "../../../../layouts/dashboard";
 import {
   EventEditor,
   handleSubmitUpdate,
-} from "../../../../components/events/form";
+} from "../../../../components/events/EventEditor";
 
 const EventEditPage: NextPage = () => {
   const router = useRouter();
