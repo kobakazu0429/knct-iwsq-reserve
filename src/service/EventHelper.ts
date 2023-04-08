@@ -16,6 +16,7 @@ export const EventHelper = {
     return await prisma.event.create({
       data: {
         name: faker.random.word(),
+        description: "",
         attendance_limit: parseInt(faker.random.numeric(), 10),
         place: "",
         start_time: faker.date.past(),
@@ -25,7 +26,7 @@ export const EventHelper = {
             id: organizerId,
           },
         },
-        ...args,
+        ...(args as Partial<Prisma.EventCreateInput>),
       },
     });
   },

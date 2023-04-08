@@ -10,7 +10,7 @@
     "lint:eslint": "eslint \"./src/**/*.{js,ts,tsx}\" --fix",
     "lint:prettier": "prettier \"./src/**/*.{js,ts,tsx}\" --write",
     "seed": "ts-node ./prisma/seed.ts",
-    "db:reset": "ts-node ./prisma/reset.ts",
+    "db:reset": "ts-node ./cli/reset.ts",
     "test": "FAKER_SEED=6777588418545671 vitest run --no-threads",
     "test:watch": "FAKER_SEED=6777588418545671 vitest watch --no-threads",
     "coverage": "FAKER_SEED=6777588418545671 vitest run --coverage --no-threads"
@@ -22,7 +22,7 @@
     "@prisma/client": "^4.11.0",
     "@trpc/client": "^10.18.0",
     "@trpc/server": "^10.18.0",
-    "@types/node": "18.14.2",
+    "@types/node": "18.15.11",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "baseui": "^12.2.0",

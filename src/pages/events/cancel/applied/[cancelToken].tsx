@@ -10,6 +10,7 @@ import { Button } from "baseui/button";
 import { BaseLayout } from "../../../../layouts/base";
 import { useCallback } from "react";
 import { cancelableApplicantInput } from "../../../../service/EventUser";
+import { formatDatetime } from "../../../../utils/date";
 
 const sleep = (ms: number) => {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -73,7 +74,7 @@ const AppliedEventCancelPage: NextPage = () => {
       >
         キャンセルする
       </Button>
-      <p>キャンセル済み: {data?.Applicant?.canceled_at}</p>
+      <p>キャンセル済み: {formatDatetime(data?.Applicant?.canceled_at)}</p>
     </BaseLayout>
   );
 };

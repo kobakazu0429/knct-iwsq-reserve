@@ -205,7 +205,7 @@ export const listEvents = async (input: z.infer<typeof listEventsInput>) => {
 
 export const createEventInput = z.object({
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string(),
   place: z.string(),
   hidden: z.boolean(),
   start_time: z.union([z.string().datetime(), z.date()]),

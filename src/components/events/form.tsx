@@ -15,7 +15,7 @@ import { userRoleHelper } from "../../prisma/user";
 interface FormValues {
   id: string;
   name: string;
-  description?: string;
+  description: string;
   place: string;
   attendance_limit: number;
   start_time: any;
@@ -108,6 +108,7 @@ export const EventEditor: FC<Props> = ({ defaultValues, onSubmit }) => {
 
   const methods = useForm<FormValues>({
     defaultValues: {
+      description: "",
       place: "スクエア",
       attendance_limit: 10,
       hidden: isGuest,

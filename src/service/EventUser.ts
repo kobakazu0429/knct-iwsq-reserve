@@ -418,7 +418,7 @@ export const applicantsToParticipants = (
         Event: {
           id: string;
           name: string;
-          description: string | null;
+          description: string;
           place: string;
           start_time: Date;
           end_time: Date;

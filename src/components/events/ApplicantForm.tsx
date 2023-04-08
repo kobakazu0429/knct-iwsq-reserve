@@ -63,6 +63,11 @@ export const handleSubmitApply = ({ enqueue, dequeue }: SnackbarFunction) => {
           await fetch("/api/mail/");
         } catch (error) {
           console.error(error);
+          dequeue();
+          enqueue({
+            message:
+              "エラーが発生しました。もう一度試すか、時間をおいて試してみてください。解決しない場合はTAにご相談ください。",
+          });
         }
       };
     };
@@ -83,7 +88,6 @@ const DepartmentCombobox: FC<ComboboxProps> = ({ onChange }) => {
       options={departmentLabels}
       errorsName="department"
       onChnage={(newLabel) => {
-        // @ts-expect-error
         setValue("department", departmentLabelToValue[newLabel]);
         onChange();
       }}
@@ -97,7 +101,6 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
 
   const [gradeComboboxLabels, gradeLabelToValue] = useMemo(() => {
     const result = makeGradeOptions(
-      // @ts-expect-error
       departmentLabelToValue[departmentComboboxLabelValue]
     );
     return result;
@@ -119,7 +122,6 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
 
     const newGradeComboboxLabel = gradeComboboxLabels[0]!;
     setValue("gradeComboboxLabel", newGradeComboboxLabel);
-    // @ts-expect-error
     setValue("grade", gradeLabelToValue[newGradeComboboxLabel]);
     onChange();
   }, [
@@ -138,7 +140,6 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
       options={gradeComboboxLabels}
       errorsName="grade"
       onChnage={(newLabel) => {
-        // @ts-expect-error
         setValue("grade", gradeLabelToValue[newLabel]);
         onChange();
       }}

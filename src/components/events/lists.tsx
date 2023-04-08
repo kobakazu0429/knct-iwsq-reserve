@@ -2,7 +2,7 @@ import React, { type FC } from "react";
 import { Button } from "baseui/button";
 import { ListItem, ListItemLabel } from "baseui/list";
 
-interface Event {
+export interface EventProps {
   url: string;
   name: string;
   remaining: number;
@@ -10,7 +10,7 @@ interface Event {
   startTime: string;
 }
 
-const EventList: FC<{ event: Event }> = ({ event }) => {
+const EventList: FC<{ event: EventProps }> = ({ event }) => {
   return (
     <ListItem
       endEnhancer={() => (
@@ -33,7 +33,7 @@ const EventList: FC<{ event: Event }> = ({ event }) => {
 };
 
 export const EventLists: FC<{
-  events: Event[];
+  events: EventProps[];
 }> = ({ events }) => {
   return (
     <ul>

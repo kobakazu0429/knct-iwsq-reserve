@@ -5,6 +5,7 @@ import { getBaseUrl } from "../utils/url";
 
 export const useTrpc = () => {
   const client = useMemo(() => {
+    // @ts-expect-error
     return createTRPCProxyClient<AppRouter>({
       links: [
         httpBatchLink({

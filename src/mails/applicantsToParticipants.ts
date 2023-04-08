@@ -8,10 +8,7 @@ import { stringOrDateWithTransform } from "../libs/zod/stringOrDateWithTransform
 export const applicantsToParticipantsMailInputSchema = z.object({
   name: z.string(),
   event_name: z.string(),
-  description: z
-    .string()
-    .optional()
-    .transform((v) => v ?? ""),
+  description: z.string(),
   place: z.string(),
   start_time: stringOrDateWithTransform,
   end_time: stringOrDateWithTransform,

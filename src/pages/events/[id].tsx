@@ -36,7 +36,6 @@ const EventDetailPage: NextPage = () => {
         <div className={css({ width: "100%", display: "flex" })}>
           <div className={css({ flexGrow: 1 })}>
             <Heading>イベント詳細</Heading>
-            <ListHeading heading="場所" subHeading={event.place} />
             <ListHeading heading="説明" subHeading={event.description} />
             <ListHeading heading="場所" subHeading={event.place} />
             <ListHeading

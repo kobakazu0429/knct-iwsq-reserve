@@ -2,14 +2,14 @@ import React from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { formatISO9075 } from "date-fns";
 import { useStyletron } from "baseui";
 import { StatefulDataTable, StringColumn } from "baseui/data-table";
 import { Heading, HeadingLevel } from "baseui/heading";
-import { AppRouterOutput } from "../../../../server/routers";
+import type { AppRouterOutput } from "../../../../server/routers";
 import { useTrpc } from "../../../../trpc";
 import { Dashboard } from "../../../../layouts/dashboard";
 import { Link } from "../../../../components/baseui/Link";
+import { formatDatetime } from "../../../../utils/date";
 
 type Event = AppRouterOutput["auth"]["events"]["get"];
 type Applicant = NonNullable<Event>["Applicant"][number];
@@ -35,22 +35,22 @@ const applicantColumns = [
   StringColumn({
     title: "キャンセル日時",
     mapDataToValue: (data: Applicant) =>
-      data.canceled_at ? formatISO9075(new Date(data.canceled_at)) : "",
+      data.canceled_at ? formatDatetime(data.canceled_at) : "",
   }),
   StringColumn({
     title: "参加申込期限",
     mapDataToValue: (data: Applicant) =>
-      data.deadline ? formatISO9075(new Date(data.deadline)) : "",
+      data.deadline ? formatDatetime(data.deadline) : "",
   }),
   StringColumn({
     title: "登録日時",
     mapDataToValue: (data: Applicant) =>
-      formatISO9075(new Date(data.EventUser.createdAt)),
+      formatDatetime(data.EventUser.createdAt),
   }),
   StringColumn({
     title: "更新日時",
     mapDataToValue: (data: Applicant) =>
-      formatISO9075(new Date(data.EventUser.updatedAt)),
+      formatDatetime(data.EventUser.updatedAt),
   }),
 ];
 
@@ -74,17 +74,17 @@ const participantColumns = [
   StringColumn({
     title: "キャンセル日時",
     mapDataToValue: (data: Participant) =>
-      data.canceled_at ? formatISO9075(new Date(data.canceled_at)) : "",
+      data.canceled_at ? formatDatetime(data.canceled_at) : "",
   }),
   StringColumn({
     title: "登録日時",
     mapDataToValue: (data: Participant) =>
-      formatISO9075(new Date(data.EventUser.createdAt)),
+      formatDatetime(data.EventUser.createdAt),
   }),
   StringColumn({
     title: "更新日時",
     mapDataToValue: (data: Participant) =>
-      formatISO9075(new Date(data.EventUser.updatedAt)),
+      formatDatetime(data.EventUser.updatedAt),
   }),
 ];
 
@@ -124,13 +124,13 @@ const EventDetailPage: NextPage = () => {
         <Link href={`${router.query.id}/edit`}>編集する</Link>
         <p>ID: {data.id}</p>
         <p>状態: {data.status}</p>
-        <p>公開日: {data.published_at}</p>
+        <p>公開日: {formatDatetime(data.published_at)}</p>
         <p>非公開: {data.hidden.toString()}</p>
         <p>主催者: {data.organizer.name}</p>
         <p>説明: {data.description}</p>
         <p>場所: {data.place}</p>
-        <p>開始時間: {formatISO9075(new Date(data.start_time))}</p>
-        <p>終了時間: {formatISO9075(new Date(data.end_time))}</p>
+        <p>開始時間: {formatDatetime(data.start_time)}</p>
+        <p>終了時間: {formatDatetime(data.end_time)}</p>
         <p>制限人数: {data.attendance_limit}</p>
         <p>参加予定人数: {data._count.Participant}</p>
         <p>キャンセル待ち人数: {data._count.Applicant}</p>

@@ -49,7 +49,7 @@ const EventEditPage: NextPage = () => {
         defaultValues={{
           id: event.id,
           name: event.name,
-          description: event.description ?? "",
+          description: event.description,
           place: event.place,
           attendance_limit: event.attendance_limit,
           start_time: event.start_time,
