@@ -9,7 +9,7 @@ import { Link } from "../../../../components/baseui/Link";
 import { useSnackbar, DURATION } from "baseui/snackbar";
 import { Button } from "baseui/button";
 import { BaseLayout } from "../../../../layouts/base";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { confirmableParticipantingInput } from "../../../../service/EventUser";
 import { formatDatetime } from "../../../../utils/date";
 
@@ -21,6 +21,7 @@ const ParticipatingEventConfirmPage: NextPage = () => {
   const [, theme] = useStyletron();
   const router = useRouter();
   const trpc = useTrpc();
+  const [isProcessing, setIsProcessing] = useState(false);
   const { enqueue, dequeue } = useSnackbar();
 
   const { data, error, isLoading } = useSWR(
@@ -83,6 +84,7 @@ const ParticipatingEventConfirmPage: NextPage = () => {
   }, [data]);
 
   const confirm = useCallback(async () => {
+    setIsProcessing(true);
     enqueue(
       { message: "参加申し込み中です", progress: true },
       DURATION.infinite
@@ -103,15 +105,22 @@ const ParticipatingEventConfirmPage: NextPage = () => {
       enqueue({
         message: `${result.value.event.name}の参加が確定しました。`,
       });
-      // router.push(`/events/${data.eventId}`);
-      // await fetch("/api/mail/");
+      await router.push(`/events/${data?.event.id}`);
+      setIsProcessing(false);
     } catch (error) {
       console.error(error);
+      dequeue();
+      enqueue({
+        message:
+          "エラーが発生しました。もう一度試すか、時間をおいて試してみてください。解決しない場合はTAにご相談ください。",
+      });
+      setIsProcessing(false);
     }
   }, [
+    data?.event.id,
     dequeue,
     enqueue,
-    router.query.applicantId,
+    router,
     trpc.public.eventUsers.confirmParticipanting,
   ]);
 
@@ -132,6 +141,8 @@ const ParticipatingEventConfirmPage: NextPage = () => {
         type="button"
         onClick={confirm}
         disabled={!status.canConfirm}
+        isLoading={isProcessing}
+        isSelected={isProcessing}
         overrides={{ Root: { style: { marginTop: theme.sizing.scale600 } } }}
       >
         参加する
