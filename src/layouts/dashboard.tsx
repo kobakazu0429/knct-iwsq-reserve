@@ -6,7 +6,6 @@ import { userRoleExtender } from "../prisma/user";
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
 import { HeadingLevel } from "baseui/heading";
-import { Button } from "baseui/button";
 import { Navigation, type Item } from "baseui/side-navigation";
 import {
   HeaderNavigation,
@@ -94,21 +93,7 @@ export const Dashboard: FC<Props> = ({
       >
         <NavigationList $align={ALIGN.left}>
           <NavigationItem className={css({ paddingLeft: 0 })}>
-            IWスクエア管理システム
-          </NavigationItem>
-        </NavigationList>
-        <NavigationList $align={ALIGN.center} />
-        <NavigationList $align={ALIGN.right}>
-          <NavigationItem>
-            <Link href="#basic-link1">Tab Link One</Link>
-          </NavigationItem>
-          <NavigationItem>
-            <Link href="#basic-link2">Tab Link Two</Link>
-          </NavigationItem>
-        </NavigationList>
-        <NavigationList $align={ALIGN.right}>
-          <NavigationItem>
-            <Button>Get started</Button>
+            スクエア管理システム
           </NavigationItem>
         </NavigationList>
         <NavigationList $align={ALIGN.right}>

@@ -1,15 +1,14 @@
 import { type FC, type ReactNode } from "react";
+import Link from "next/link";
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
 import { HeadingLevel } from "baseui/heading";
-import { Button } from "baseui/button";
 import {
   HeaderNavigation,
   ALIGN,
   StyledNavigationItem as NavigationItem,
   StyledNavigationList as NavigationList,
 } from "baseui/header-navigation";
-import { Link } from "../components/baseui/Link";
 import { ErrorCard } from "../components/ErrorCard";
 
 interface Props {
@@ -39,21 +38,12 @@ export const BaseLayout: FC<Props> = ({ children, isLoading, error }) => {
       >
         <NavigationList $align={ALIGN.left}>
           <NavigationItem className={css({ paddingLeft: 0 })}>
-            IWスクエア
-          </NavigationItem>
-        </NavigationList>
-        <NavigationList $align={ALIGN.center} />
-        <NavigationList $align={ALIGN.right}>
-          <NavigationItem>
-            <Link href="#basic-link1">Tab Link One</Link>
-          </NavigationItem>
-          <NavigationItem>
-            <Link href="#basic-link2">Tab Link Two</Link>
-          </NavigationItem>
-        </NavigationList>
-        <NavigationList $align={ALIGN.right}>
-          <NavigationItem>
-            <Button>Get started</Button>
+            <Link
+              href="/"
+              className={css({ textDecoration: "none", color: "unset" })}
+            >
+              インキュベーションスクエア
+            </Link>
           </NavigationItem>
         </NavigationList>
       </HeaderNavigation>
