@@ -1,3 +1,4 @@
+import Head from "next/head";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -31,6 +32,9 @@ const EventDetailPage: NextPage = () => {
 
   return (
     <BaseLayout isLoading={isLoading} error={error}>
+      <Head>
+        <title>{event.name} | スクエア</title>
+      </Head>
       <Heading>{event.name}</Heading>
       <HeadingLevel>
         <div className={css({ width: "100%", display: "flex" })}>

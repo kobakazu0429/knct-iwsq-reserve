@@ -1,3 +1,4 @@
+import Head from "next/head";
 import useSWR from "swr";
 import { Heading } from "baseui/heading";
 import { EventLists, type EventProps } from "../../components/events/lists";
@@ -23,6 +24,9 @@ export default function Events() {
 
   return (
     <BaseLayout isLoading={isLoading} error={error}>
+      <Head>
+        <title>イベント | スクエア</title>
+      </Head>
       <Heading styleLevel={4}>イベント</Heading>
       <EventLists events={events} />
     </BaseLayout>

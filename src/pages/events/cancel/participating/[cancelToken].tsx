@@ -1,3 +1,4 @@
+import Head from "next/head";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -59,23 +60,28 @@ const ParticipatingEventCancelPage: NextPage = () => {
     trpc.public.eventUsers.cancelParticipant,
   ]);
 
-  const event = data?.event;
-  const participant = data?.participant;
+  if (!data) return null;
+
+  const event = data.event;
+  const participant = data.participant;
 
   return (
     <BaseLayout isLoading={isLoading} error={error}>
-      <Heading>{event?.name}</Heading>
-      <Link href={`/events/${event?.id}`}>イベントの詳細を確認する</Link>
+      <Head>
+        <title>{event.name} | スクエア</title>
+      </Head>
+      <Heading>{event.name}</Heading>
+      <Link href={`/events/${event.id}`}>イベントの詳細を確認する</Link>
       <br />
       <Button
         type="button"
         onClick={cancel}
-        disabled={!!participant?.canceled_at}
+        disabled={!!participant.canceled_at}
         overrides={{ Root: { style: { marginTop: theme.sizing.scale600 } } }}
       >
         キャンセルする
       </Button>
-      <p>キャンセル済み: {formatDatetime(participant?.canceled_at)}</p>
+      <p>キャンセル済み: {formatDatetime(participant.canceled_at)}</p>
     </BaseLayout>
   );
 };

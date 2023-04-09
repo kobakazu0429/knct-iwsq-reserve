@@ -1,3 +1,4 @@
+import Head from "next/head";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -114,13 +115,18 @@ const ParticipatingEventConfirmPage: NextPage = () => {
     trpc.public.eventUsers.confirmParticipanting,
   ]);
 
-  const event = data?.event;
-  const applicant = data?.applicant;
+  if (!data) return null;
+
+  const event = data.event;
+  const applicant = data.applicant;
 
   return (
     <BaseLayout isLoading={isLoading} error={error}>
-      <Heading>{event?.name}</Heading>
-      <Link href={`/events/${event?.id}`}>イベントの詳細を確認する</Link>
+      <Head>
+        <title>{event.name} | スクエア</title>
+      </Head>
+      <Heading>{event.name}</Heading>
+      <Link href={`/events/${event.id}`}>イベントの詳細を確認する</Link>
       <br />
       <Button
         type="button"
@@ -131,11 +137,11 @@ const ParticipatingEventConfirmPage: NextPage = () => {
         参加する
       </Button>
       <p>{status.message}</p>
-      {applicant?.deadline && (
-        <p>参加申し込み期限: {formatDatetime(applicant?.deadline)}</p>
+      {applicant.deadline && (
+        <p>参加申し込み期限: {formatDatetime(applicant.deadline)}</p>
       )}
-      {applicant?.canceled_at && (
-        <p>キャンセル済み: {formatDatetime(applicant?.canceled_at)}</p>
+      {applicant.canceled_at && (
+        <p>キャンセル済み: {formatDatetime(applicant.canceled_at)}</p>
       )}
     </BaseLayout>
   );
