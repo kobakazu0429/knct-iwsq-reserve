@@ -3,13 +3,13 @@ import { type NextRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useSnackbar, DURATION } from "baseui/snackbar";
-import { Button } from "baseui/button";
 import { type Trpc } from "../../trpc";
 import { Input } from "../baseui/input";
 import { Checkbox } from "../baseui/Checkbox";
 import { Textarea } from "../baseui/textarea";
 import { ComposedDateTimeRangePickers } from "../baseui/ComposedDateTimeRangePickers";
 import { PlainButtonGroup } from "../baseui/PlainButtonGroup";
+import { SubmitButton } from "../baseui/SubmitButton";
 import { userRoleHelper } from "../../prisma/user";
 
 interface FormValues {
@@ -56,7 +56,7 @@ export const handleSubmitCreate = ({ enqueue, dequeue }: SnackbarFunction) => {
 
           dequeue();
           enqueue({ message: "保存しました" });
-          router.push(`/dashboard/events/${result.value.id}`);
+          await router.push(`/dashboard/events/${result.value.id}`);
         } catch (error) {
           console.error(error);
         }
@@ -86,7 +86,7 @@ export const handleSubmitUpdate = ({ enqueue, dequeue }: SnackbarFunction) => {
 
           dequeue();
           enqueue({ message: "保存しました" });
-          router.push(`/dashboard/events/${result.value.id}`);
+          await router.push(`/dashboard/events/${result.value.id}`);
         } catch (error) {
           console.error(error);
         }
@@ -147,12 +147,13 @@ export const EventEditor: FC<Props> = ({ defaultValues, onSubmit }) => {
         {isGuest && <p>ゲストの方は「非公開」から変更できません</p>}
 
         <PlainButtonGroup justifyContent="right">
-          <Button kind="secondary" disabled>
+          <SubmitButton kind="secondary" disabled>
             保存する
-          </Button>
-          <Button type="submit" disabled={isGuest}>
+          </SubmitButton>
+
+          <SubmitButton type="submit" disabled={isGuest}>
             {submitButtonText}
-          </Button>
+          </SubmitButton>
         </PlainButtonGroup>
       </form>
     </FormProvider>

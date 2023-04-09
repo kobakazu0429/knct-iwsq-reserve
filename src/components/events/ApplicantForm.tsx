@@ -4,10 +4,10 @@ import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useStyletron } from "baseui";
 import { useSnackbar, DURATION } from "baseui/snackbar";
-import { Button } from "baseui/button";
 import { type Trpc } from "../../trpc";
 import { Input } from "../baseui/input";
 import { Combobox } from "../baseui/Combobox";
+import { SubmitButton } from "../baseui/SubmitButton";
 import {
   makeGradeOptions,
   departmentLabels,
@@ -59,8 +59,7 @@ export const handleSubmitApply = ({ enqueue, dequeue }: SnackbarFunction) => {
             message:
               "参加申し込みが完了しました。後ほどメールが届きますので確認してください。",
           });
-          router.push(`/events/${data.eventId}`);
-          await fetch("/api/mail/");
+          await router.push(`/events`);
         } catch (error) {
           console.error(error);
           dequeue();
@@ -184,7 +183,7 @@ export const ApplicantForm: FC<Props> = ({ defaultValues, onSubmit }) => {
           <GradeCombobox onChange={() => methods.trigger("email")} />
         </div>
 
-        <Button type="submit">申し込む</Button>
+        <SubmitButton>申し込む</SubmitButton>
         <pre>
           <code>{JSON.stringify(methods.formState.errors, null, 2)}</code>
         </pre>
