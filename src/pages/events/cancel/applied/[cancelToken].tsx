@@ -45,7 +45,7 @@ const AppliedEventCancelPage: NextPage = () => {
 
       dequeue();
       enqueue({
-        message: `${result.value.Event.name}の申し込みをキャンセルしました。`,
+        message: `${result.value.event.name}の申し込みをキャンセルしました。`,
       });
       // router.push(`/events/${data.eventId}`);
       // await fetch("/api/mail/");
@@ -59,7 +59,8 @@ const AppliedEventCancelPage: NextPage = () => {
     trpc.public.eventUsers.cancelApplicant,
   ]);
 
-  const event = data?.Applicant?.Event;
+  const event = data?.event;
+  const applicant = data?.applicant;
 
   return (
     <BaseLayout isLoading={isLoading} error={error}>
@@ -69,12 +70,12 @@ const AppliedEventCancelPage: NextPage = () => {
       <Button
         type="button"
         onClick={cancel}
-        disabled={!!data?.Applicant?.canceled_at}
+        disabled={!!applicant?.canceled_at}
         overrides={{ Root: { style: { marginTop: theme.sizing.scale600 } } }}
       >
         キャンセルする
       </Button>
-      <p>キャンセル済み: {formatDatetime(data?.Applicant?.canceled_at)}</p>
+      <p>キャンセル済み: {formatDatetime(applicant?.canceled_at)}</p>
     </BaseLayout>
   );
 };

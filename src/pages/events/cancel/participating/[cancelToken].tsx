@@ -45,7 +45,7 @@ const ParticipatingEventCancelPage: NextPage = () => {
 
       dequeue();
       enqueue({
-        message: `${result.value.Event.name}の参加をキャンセルしました。`,
+        message: `${result.value.event.name}の参加をキャンセルしました。`,
       });
       // router.push(`/events/${data.eventId}`);
       // await fetch("/api/mail/");
@@ -59,7 +59,8 @@ const ParticipatingEventCancelPage: NextPage = () => {
     trpc.public.eventUsers.cancelParticipant,
   ]);
 
-  const event = data?.Participant?.Event;
+  const event = data?.event;
+  const participant = data?.participant;
 
   return (
     <BaseLayout isLoading={isLoading} error={error}>
@@ -69,12 +70,12 @@ const ParticipatingEventCancelPage: NextPage = () => {
       <Button
         type="button"
         onClick={cancel}
-        disabled={!!data?.Participant?.canceled_at}
+        disabled={!!participant?.canceled_at}
         overrides={{ Root: { style: { marginTop: theme.sizing.scale600 } } }}
       >
         キャンセルする
       </Button>
-      <p>キャンセル済み: {formatDatetime(data?.Participant?.canceled_at)}</p>
+      <p>キャンセル済み: {formatDatetime(participant?.canceled_at)}</p>
     </BaseLayout>
   );
 };

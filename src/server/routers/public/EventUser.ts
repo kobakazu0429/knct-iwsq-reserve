@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { match } from "ts-pattern";
 import { publicProcedure, router } from "../../trpc";
 import { getBaseUrl } from "./../../../utils/url";
@@ -33,26 +34,80 @@ import {
 export const eventUsersRouter = router({
   cancelableApplicant: publicProcedure
     .input(cancelableApplicantInput)
+    .output(
+      z.object({
+        id: z.string(),
+        event: z.object({
+          id: z.string(),
+          name: z.string(),
+        }),
+        applicant: z.object({
+          deadline: z.date().nullish(),
+          canceled_at: z.date().nullish(),
+        }),
+      })
+    )
     .query(async ({ input }) => {
-      return cancelableApplicant(input);
+      const result = await cancelableApplicant(input);
+      // TODO Mail
+      return {
+        id: result.id,
+        event: {
+          id: result.Applicant!.Event.id,
+          name: result.Applicant!.Event.name,
+        },
+        applicant: {
+          deadline: result.Applicant!.deadline,
+          canceled_at: result.Applicant!.canceled_at,
+        },
+      };
     }),
 
   cancelableParticipant: publicProcedure
     .input(cancelableParticipantInput)
+    .output(
+      z.object({
+        id: z.string(),
+        event: z.object({
+          id: z.string(),
+          name: z.string(),
+        }),
+        participant: z.object({
+          canceled_at: z.date().nullish(),
+        }),
+      })
+    )
     .query(async ({ input }) => {
-      return cancelableParticipant(input);
+      const result = await cancelableParticipant(input);
+      // TODO Mail
+      return {
+        id: result.id,
+        event: {
+          id: result.Participant!.Event.id,
+          name: result.Participant!.Event.name,
+        },
+        participant: {
+          canceled_at: result.Participant!.canceled_at,
+        },
+      };
     }),
 
   cancelApplicant: publicProcedure
     .input(cancelableApplicantInput)
+    .output(z.object({ event: z.object({ name: z.string() }) }))
     .mutation(async ({ input }) => {
-      return cancelApplicant(input);
+      const result = await cancelApplicant(input);
+      // TODO Mail
+      return { event: { name: result.Event.name } };
     }),
 
   cancelParticipant: publicProcedure
     .input(cancelableParticipantInput)
+    .output(z.object({ event: z.object({ name: z.string() }) }))
     .mutation(async ({ input }) => {
-      return cancelParticipant(input);
+      const result = await cancelParticipant(input);
+      // TODO Mail
+      return { event: { name: result.Event.name } };
     }),
 
   createParticipantOrApplicant: publicProcedure
