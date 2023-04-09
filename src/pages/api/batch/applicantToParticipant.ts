@@ -1,19 +1,33 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verifySignatureWithSigningKey } from "../../../libs/qstash/verify";
-import { trpcServerSide } from "../../../server";
+import {
+  applicantsToParticipants,
+  applicantsToParticipantsInput,
+  createAppliedCancelUrl,
+  createConfirmParticipatingUrl,
+} from "../../../service/EventUser";
 import { sendgrid } from "../../../service/SendGrid";
+import { getBaseUrl } from "../../../utils/url";
 import {
   applicantsToParticipantsMailInputSchema,
   applicantsToParticipantsMailBody,
   applicantsToParticipantsMailSubject,
 } from "./../../../mails/applicantsToParticipants";
 
-const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
-  const trpc = trpcServerSide();
-  const result = await trpc.public.eventUsers.applicantsToParticipants();
-  res.status(200).json(result);
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const personalizations = result.result?.map((e) => {
+    const input =
+      req.body === ""
+        ? undefined
+        : applicantsToParticipantsInput.parse(req.body);
+    const data = await applicantsToParticipants(input);
+    const result = data.result;
+
+    if (!result) {
+      return res.status(200).end();
+    }
+
+    const personalizations = result.map((e) => {
       const substitutions = applicantsToParticipantsMailInputSchema.parse({
         name: e.name,
         event_name: e.Applicant?.Event.name,
@@ -21,22 +35,29 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
         place: e.Applicant?.Event.place,
         start_time: e.Applicant?.Event.start_time,
         end_time: e.Applicant?.Event.end_time,
-        cancel_url: e.Applicant?.cancel_token,
-        participant_url: "",
+        cancel_url: createAppliedCancelUrl(
+          getBaseUrl(),
+          e.Applicant!.cancel_token!
+        ),
+        participant_url: createConfirmParticipatingUrl(
+          getBaseUrl(),
+          e.Applicant!.id
+        ),
         deadline: e.Applicant?.deadline,
       });
       return { to: e.email, substitutions };
     });
 
-    if (!personalizations) throw new Error("");
-
-    sendgrid.personalizations({
+    await sendgrid.personalizations({
       subject: applicantsToParticipantsMailSubject,
       text: applicantsToParticipantsMailBody,
       personalizations,
     });
+
+    return res.status(200).end();
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).end();
   }
 };
 

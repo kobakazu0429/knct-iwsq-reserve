@@ -26,6 +26,13 @@ export const createParticipatingCancelUrl = (
   return `${baseUrl}/events/cancel/participating/${cancelToken}`;
 };
 
+export const createConfirmParticipatingUrl = (
+  baseUrl: string,
+  applicantId: string
+) => {
+  return `${baseUrl}/events/confirm/participating/${applicantId}`;
+};
+
 export const cancelableApplicantInput = z.object({
   cancelToken: z.string(),
 });
@@ -413,6 +420,7 @@ export const applicantsToParticipants = (
       name: string;
       email: string;
       Applicant: {
+        id: string;
         cancel_token: string;
         deadline: Date | null;
         Event: {
@@ -445,6 +453,7 @@ export const applicantsToParticipants = (
             email: true,
             Applicant: {
               select: {
+                id: true,
                 cancel_token: true,
                 deadline: true,
                 Event: {

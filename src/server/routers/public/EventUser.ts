@@ -12,8 +12,6 @@ import {
   cancelParticipant,
   createParticipantOrApplicant,
   createParticipantOrApplicantInput,
-  applicantsToParticipants,
-  applicantsToParticipantsInput,
   createAppliedCancelUrl,
   createParticipatingCancelUrl,
 } from "../../../service/EventUser";
@@ -162,11 +160,5 @@ export const eventUsersRouter = router({
           });
         })
         .exhaustive();
-    }),
-
-  applicantsToParticipants: publicProcedure
-    .input(applicantsToParticipantsInput)
-    .mutation(async ({ input }) => {
-      return applicantsToParticipants(input);
     }),
 });
