@@ -27,6 +27,13 @@ export const Checkbox: FC<Props> = ({ name, label, ...props }) => {
       name={name}
       render={({ field }) => (
         <BaseUiCheckbox
+          overrides={{
+            Root: {
+              style: {
+                width: "fit-content",
+              },
+            },
+          }}
           // @ts-expect-error
           inputRef={field.ref}
           checked={field.value}
