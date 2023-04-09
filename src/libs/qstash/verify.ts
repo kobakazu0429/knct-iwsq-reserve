@@ -25,15 +25,24 @@ export type VerifySignaturConfig = {
   noVerify?: boolean;
 };
 
+const getBody = async (req: NextApiRequest) => {
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+  const body = Buffer.concat(chunks).toString("utf-8");
+  return body;
+};
+
 const verifyWithKey = async ({
   token,
   signingKey,
-  req,
+  body,
   clockTolerance = 0,
 }: {
   token: string;
   signingKey: string;
-  req: NextApiRequest;
+  body: string;
   clockTolerance?: VerifySignaturConfig["clockTolerance"];
 }) => {
   const decoded = verify(token, signingKey, {
@@ -44,11 +53,6 @@ const verifyWithKey = async ({
     throw new Error(`typeof decoded  === "string"`);
   }
 
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
-  }
-  const body = Buffer.concat(chunks).toString("utf-8");
   const bodyHash = await subtle.digest(
     "SHA-256",
     typeof body === "string" ? new TextEncoder().encode(body) : body
@@ -76,6 +80,18 @@ export function verifySignature(
   config: VerifySignaturConfig
 ): NextApiHandler {
   return async (req: NextApiRequest, res: NextApiResponse) => {
+    const body = await getBody(req);
+
+    try {
+      if (req.headers["content-type"] === "application/json") {
+        req.body = JSON.parse(body);
+      } else {
+        req.body = body;
+      }
+    } catch {
+      req.body = body;
+    }
+
     if (config.noVerify) {
       return handler(req, res);
     }
@@ -92,7 +108,7 @@ export function verifySignature(
       await verifyWithKey({
         signingKey: config.currentSigningKey,
         token: signature,
-        req,
+        body,
         // url: config.url,
         clockTolerance: config.clockTolerance,
       })
@@ -103,7 +119,7 @@ export function verifySignature(
       await verifyWithKey({
         signingKey: config.nextSigningKey,
         token: signature,
-        req,
+        body,
         // url: config.url,
         clockTolerance: config.clockTolerance,
       })
