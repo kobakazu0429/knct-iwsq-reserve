@@ -296,7 +296,7 @@ export const createParticipantOrApplicant = async (
       });
 
       return {
-        type: "applied",
+        type: "participating",
         user: eventUser,
         event: selectEvent,
         cancelToken,
@@ -320,7 +320,7 @@ export const createParticipantOrApplicant = async (
       });
 
       return {
-        type: "participating",
+        type: "applied",
         user: eventUser,
         event: selectEvent,
         cancelToken,

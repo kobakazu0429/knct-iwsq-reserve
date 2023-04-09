@@ -4,7 +4,8 @@ export const getBaseUrl = () => {
     return "";
   if (process.env.VERCEL_URL)
     // reference for vercel.com
-    return `https://${process.env.VERCEL_URL}`;
+    // return `https://${process.env.VERCEL_URL}`;
+    return `https://knct-iwsq.vercel.app`;
   if (process.env.RENDER_INTERNAL_HOSTNAME)
     // reference for render.com
     return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
