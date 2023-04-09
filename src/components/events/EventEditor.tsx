@@ -147,9 +147,9 @@ export const EventEditor: FC<Props> = ({ defaultValues, onSubmit }) => {
         {isGuest && <p>ゲストの方は「非公開」から変更できません</p>}
 
         <PlainButtonGroup justifyContent="right">
-          <SubmitButton kind="secondary" disabled>
+          {/* <SubmitButton kind="secondary" disabled>
             保存する
-          </SubmitButton>
+          </SubmitButton> */}
 
           <SubmitButton type="submit" disabled={isGuest}>
             {submitButtonText}
