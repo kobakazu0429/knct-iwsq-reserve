@@ -34,9 +34,20 @@ const EventDetailPage: NextPage = () => {
       <Heading>{event.name}</Heading>
       <HeadingLevel>
         <div className={css({ width: "100%", display: "flex" })}>
-          <div className={css({ flexGrow: 1 })}>
+          <div className={css({ flexGrow: 1, maxWidth: "50%" })}>
             <Heading>イベント詳細</Heading>
-            <ListHeading heading="説明" subHeading={event.description} />
+            <ListHeading
+              heading="説明"
+              subHeading={event.description}
+              overrides={{
+                SubHeadingContainer: {
+                  style: {
+                    whiteSpace: "pre-wrap",
+                    "-webkit-line-clamp": "initial",
+                  },
+                },
+              }}
+            />
             <ListHeading heading="場所" subHeading={event.place} />
             <ListHeading
               heading="開始時間"
@@ -57,7 +68,7 @@ const EventDetailPage: NextPage = () => {
               subHeading={`${event._count.Applicant} 人`}
             />
           </div>
-          <div className={css({ flexGrow: 1 })}>
+          <div className={css({ flexGrow: 1, maxWidth: "50%" })}>
             <Heading>申し込みフォーム</Heading>
             <ApplicantForm
               onSubmit={handleSubmitApply(snackbar)(trpc)(router)}

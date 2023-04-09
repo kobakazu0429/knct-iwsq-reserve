@@ -63,6 +63,7 @@ export const BaseLayout: FC<Props> = ({ children, isLoading, error }) => {
           className={css({
             width: "100%",
             padding: `${theme.sizing.scale600} ${theme.sizing.scale1200}`,
+            boxSizing: "border-box",
           })}
         >
           <HeadingLevel>

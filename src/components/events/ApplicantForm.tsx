@@ -157,7 +157,7 @@ interface Props {
 }
 
 export const ApplicantForm: FC<Props> = ({ defaultValues, onSubmit }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
 
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -174,7 +174,12 @@ export const ApplicantForm: FC<Props> = ({ defaultValues, onSubmit }) => {
         <Input label="名前" name="name" required />
         <Input label="メールアドレス" name="email" required />
 
-        <div className={css({ display: "flex" })}>
+        <div
+          className={css({
+            display: "flex",
+            columnGap: theme.sizing.scale1200,
+          })}
+        >
           <DepartmentCombobox onChange={() => methods.trigger("email")} />
           <GradeCombobox onChange={() => methods.trigger("email")} />
         </div>
