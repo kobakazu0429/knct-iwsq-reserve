@@ -477,3 +477,92 @@ export const applicantsToParticipants = (
     return { ok: true, message: "success", result: noticeUsers };
   });
 };
+
+export const confirmableParticipantingInput = z.object({
+  applicantId: z.string(),
+});
+
+export const confirmableParticipanting = (
+  input: z.infer<typeof confirmableParticipantingInput>
+) => {
+  return prisma.event.findFirstOrThrow({
+    select: {
+      id: true,
+      name: true,
+      Applicant: {
+        select: {
+          id: true,
+          deadline: true,
+          canceled_at: true,
+          cancel_token: true,
+          EventUser: {
+            select: {
+              Participant: {
+                select: {
+                  canceled_at: true,
+                  createdAt: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    where: {
+      Applicant: {
+        every: {
+          id: input.applicantId,
+        },
+      },
+    },
+  });
+};
+
+export const confirmParticipantingInput = z.object({
+  applicantId: z.string(),
+});
+
+export const confirmParticipanting = async (
+  input: z.infer<typeof confirmParticipantingInput>
+) => {
+  const event = await prisma.applicant.findUnique({
+    select: {
+      eventId: true,
+    },
+    where: {
+      id: input.applicantId,
+    },
+  });
+
+  if (!event) throw new Error("not found event");
+
+  return prisma.applicant.update({
+    data: {
+      EventUser: {
+        update: {
+          Participant: {
+            create: {
+              cancel_token: createCancelToken(),
+              Event: {
+                connect: {
+                  id: event.eventId,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    where: {
+      id: input.applicantId,
+    },
+    select: {
+      Event: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+};

@@ -12,6 +12,10 @@ import {
   cancelParticipant,
   createParticipantOrApplicant,
   createParticipantOrApplicantInput,
+  confirmableParticipanting,
+  confirmableParticipantingInput,
+  confirmParticipantingInput,
+  confirmParticipanting,
   createAppliedCancelUrl,
   createParticipatingCancelUrl,
 } from "../../../service/EventUser";
@@ -160,5 +164,61 @@ export const eventUsersRouter = router({
           });
         })
         .exhaustive();
+    }),
+
+  confirmableParticipanting: publicProcedure
+    .input(confirmableParticipantingInput)
+    .output(
+      z.object({
+        event: z.object({
+          id: z.string(),
+          name: z.string(),
+        }),
+        applicant: z.object({
+          deadline: z.date().nullish(),
+          canceled_at: z.date().nullish(),
+        }),
+        participant: z.object({
+          canceled_at: z.date().nullish(),
+          created_at: z.date().nullish(),
+        }),
+      })
+    )
+    .query(async ({ input }) => {
+      const result = await confirmableParticipanting(input);
+      return {
+        event: {
+          id: result.id,
+          name: result.name,
+        },
+        applicant: {
+          deadline: result.Applicant[0]!.deadline,
+          canceled_at: result.Applicant[0]!.canceled_at,
+        },
+        participant: {
+          canceled_at: result.Applicant[0]!.EventUser.Participant?.canceled_at,
+          created_at: result.Applicant[0]!.EventUser.Participant?.createdAt,
+        },
+      };
+    }),
+
+  confirmParticipanting: publicProcedure
+    .input(confirmParticipantingInput)
+    .output(
+      z.object({
+        event: z.object({
+          id: z.string(),
+          name: z.string(),
+        }),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const result = await confirmParticipanting(input);
+      return {
+        event: {
+          id: result.Event.id,
+          name: result.Event.name,
+        },
+      };
     }),
 });
