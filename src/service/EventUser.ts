@@ -566,3 +566,95 @@ export const confirmParticipanting = async (
     },
   });
 };
+
+export const cancelOverDeadlineInput = z
+  .object({ eventIds: z.string().array().nonempty().optional() })
+  .optional();
+
+export const cancelOverDeadline = (
+  input: z.infer<typeof cancelOverDeadlineInput> = {}
+) => {
+  return prisma.$transaction(async (tx) => {
+    const now = new Date();
+
+    // deadlineを過ぎているユーザー
+    const users = await tx.applicant.findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        deadline: {
+          lte: now,
+        },
+        Event: {
+          ...(input?.eventIds && {
+            id: {
+              in: input?.eventIds,
+            },
+          }),
+        },
+      },
+    });
+
+    if (users.length === 0) {
+      return {
+        ok: true,
+        message: "No users were found to process.",
+      };
+    }
+
+    const noticeUsers: {
+      deadline: Date | null;
+      canceled_at: Date | null;
+      EventUser: {
+        id: string;
+        name: string;
+        email: string;
+      };
+      Event: {
+        id: string;
+        name: string;
+        description: string;
+        place: string;
+        start_time: Date;
+        end_time: Date;
+      };
+    }[] = [];
+
+    for await (const user of users) {
+      const updatedUser = await tx.applicant.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          canceled_at: now,
+        },
+        select: {
+          deadline: true,
+          canceled_at: true,
+          EventUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          Event: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              place: true,
+              start_time: true,
+              end_time: true,
+            },
+          },
+        },
+      });
+
+      noticeUsers.push(updatedUser);
+    }
+
+    return { ok: true, message: "success", result: noticeUsers };
+  });
+};
