@@ -12,9 +12,9 @@ export const applicantsToParticipantsMailInputSchema = z.object({
   place: z.string(),
   start_time: stringOrDateWithTransform,
   end_time: stringOrDateWithTransform,
-  cancel_url: z.string(),
-  participant_url: z.string(),
-  deadline: z.string(),
+  cancel_url: z.string().url(),
+  participant_url: z.string().url(),
+  deadline: stringOrDateWithTransform,
 });
 
 export const applicantsToParticipantsMailSubject =

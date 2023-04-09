@@ -12,7 +12,7 @@ export const appliedNotificationMailInputSchema = z.object({
   place: z.string(),
   start_time: stringOrDateWithTransform,
   end_time: stringOrDateWithTransform,
-  cancel_url: z.string(),
+  cancel_url: z.string().url(),
 });
 
 export const appliedNotificationMailSubject = "参加申し込みが完了しました！";

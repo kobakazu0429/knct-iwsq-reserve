@@ -12,7 +12,7 @@ export const participatingNotificationMailInputSchema = z.object({
   place: z.string(),
   start_time: stringOrDateWithTransform,
   end_time: stringOrDateWithTransform,
-  cancel_url: z.string(),
+  cancel_url: z.string().url(),
 });
 
 export const participatingNotificationMailSubject =
