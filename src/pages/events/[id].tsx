@@ -2,7 +2,6 @@ import Head from "next/head";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { formatISO9075 } from "date-fns";
 import { useStyletron } from "baseui";
 import { useSnackbar } from "baseui/snackbar";
 import { ListHeading } from "baseui/list";
@@ -14,6 +13,7 @@ import {
   handleSubmitApply,
 } from "../../components/events/ApplicantForm";
 import { notMobile, onlyMobile } from "../../style/mediaQuery";
+import { formatDatetime } from "../../utils/date";
 
 const EventDetailPage: NextPage = () => {
   const [css] = useStyletron();
@@ -66,11 +66,11 @@ const EventDetailPage: NextPage = () => {
             <ListHeading heading="場所" subHeading={event.place} />
             <ListHeading
               heading="開始時間"
-              subHeading={formatISO9075(new Date(event.start_time))}
+              subHeading={formatDatetime(new Date(event.start_time))}
             />
             <ListHeading
               heading="終了時間"
-              subHeading={formatISO9075(new Date(event.end_time))}
+              subHeading={formatDatetime(new Date(event.end_time))}
             />
             <ListHeading
               heading="残り参加可能人数"

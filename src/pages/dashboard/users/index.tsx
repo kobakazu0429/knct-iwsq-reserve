@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import type { NextPage } from "next";
 import useSWR from "swr";
-import { formatISO9075 } from "date-fns";
 import { Dashboard } from "../../../layouts/dashboard";
 import { useStyletron } from "baseui";
 import {
@@ -12,6 +11,7 @@ import {
 import { useTrpc } from "../../../trpc";
 import { type Role } from "../../../prisma/user";
 import { AppRouterOutput } from "../../../server/routers";
+import { formatDatetime } from "../../../utils/date";
 
 type User = AppRouterOutput["admin"]["users"]["list"][number];
 
@@ -34,11 +34,11 @@ const columns = [
   }),
   StringColumn({
     title: "更新日時",
-    mapDataToValue: (data: User) => formatISO9075(new Date(data.updatedAt)),
+    mapDataToValue: (data: User) => formatDatetime(new Date(data.updatedAt)),
   }),
   StringColumn({
     title: "作成日時",
-    mapDataToValue: (data: User) => formatISO9075(new Date(data.createdAt)),
+    mapDataToValue: (data: User) => formatDatetime(new Date(data.createdAt)),
   }),
 ];
 

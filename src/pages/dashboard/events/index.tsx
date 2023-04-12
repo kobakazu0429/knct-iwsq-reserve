@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import useSWR from "swr";
 import { Dashboard } from "../../../layouts/dashboard";
-import { formatISO9075 } from "date-fns";
 import { useStyletron } from "baseui";
 import {
   StatefulDataTable,
@@ -12,6 +11,7 @@ import {
 import { Link } from "../../../components/baseui/Link";
 import { useTrpc } from "../../../trpc";
 import { AppRouterOutput } from "../../../server/routers";
+import { formatDatetime } from "../../../utils/date";
 
 type Event = AppRouterOutput["auth"]["events"]["list"][number];
 
@@ -26,11 +26,11 @@ const columns = [
   }),
   StringColumn({
     title: "開始時間",
-    mapDataToValue: (data: Event) => formatISO9075(new Date(data.start_time)),
+    mapDataToValue: (data: Event) => formatDatetime(new Date(data.start_time)),
   }),
   StringColumn({
     title: "終了時間",
-    mapDataToValue: (data: Event) => formatISO9075(new Date(data.end_time)),
+    mapDataToValue: (data: Event) => formatDatetime(new Date(data.end_time)),
   }),
   NumericalColumn({
     title: "制限人数",
