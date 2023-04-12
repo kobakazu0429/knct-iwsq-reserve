@@ -5,6 +5,7 @@ import { EventLists, type EventProps } from "../../components/events/lists";
 import { BaseLayout } from "../../layouts/base";
 import { useTrpc } from "../../trpc";
 import { formatDatetime } from "../../utils/date";
+import { calcRemaining } from "../../utils/EventUser";
 
 export default function Events() {
   const trpc = useTrpc();
@@ -17,7 +18,11 @@ export default function Events() {
   const events: EventProps[] = data.map((event) => ({
     name: event.name,
     startTime: formatDatetime(event.start_time),
-    remaining: event.attendance_limit - event._count.Participant,
+    remaining: calcRemaining(
+      event.attendance_limit,
+      event._count.Participant,
+      event._count.Applicant
+    ),
     waitingMembersCount: event._count.Applicant,
     url: `/events/${event.id}`,
   }));
