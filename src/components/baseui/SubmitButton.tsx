@@ -12,16 +12,8 @@ export const SubmitButton: FC<Props> = ({ children, ...props }) => {
   return (
     <Button
       type="submit"
-      isLoading={
-        formState.isSubmitting ||
-        formState.isSubmitSuccessful ||
-        formState.isSubmitted
-      }
-      isSelected={
-        formState.isSubmitting ||
-        formState.isSubmitSuccessful ||
-        formState.isSubmitted
-      }
+      isLoading={formState.isSubmitting}
+      isSelected={formState.isSubmitting}
       {...props}
     >
       {children}

@@ -1,6 +1,7 @@
 import React, { type FC } from "react";
 import { Button } from "baseui/button";
 import { ListItem, ListItemLabel } from "baseui/list";
+import { onlyMobile } from "../../style/mediaQuery";
 
 export interface EventProps {
   url: string;
@@ -13,6 +14,25 @@ export interface EventProps {
 const EventList: FC<{ event: EventProps }> = ({ event }) => {
   return (
     <ListItem
+      overrides={{
+        Content: {
+          style: {
+            [onlyMobile]: {
+              marginLeft: 0,
+              paddingRight: 0,
+              flexDirection: "column",
+              alignItems: "left",
+            },
+          },
+        },
+        EndEnhancerContainer: {
+          style: {
+            [onlyMobile]: {
+              width: "100%",
+            },
+          },
+        },
+      }}
       endEnhancer={() => (
         <Button
           overrides={{ BaseButton: { style: { width: "100%" } } }}

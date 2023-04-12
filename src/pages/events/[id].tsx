@@ -13,6 +13,7 @@ import {
   ApplicantForm,
   handleSubmitApply,
 } from "../../components/events/ApplicantForm";
+import { notMobile, onlyMobile } from "../../style/mediaQuery";
 
 const EventDetailPage: NextPage = () => {
   const [css] = useStyletron();
@@ -37,8 +38,18 @@ const EventDetailPage: NextPage = () => {
       </Head>
       <Heading>{event.name}</Heading>
       <HeadingLevel>
-        <div className={css({ width: "100%", display: "flex" })}>
-          <div className={css({ flexGrow: 1, maxWidth: "50%" })}>
+        <div
+          className={css({
+            width: "100%",
+            display: "flex",
+            [onlyMobile]: {
+              flexDirection: "column",
+            },
+          })}
+        >
+          <div
+            className={css({ flexGrow: 1, [notMobile]: { maxWidth: "50%" } })}
+          >
             <Heading>イベント詳細</Heading>
             <ListHeading
               heading="説明"
@@ -72,7 +83,9 @@ const EventDetailPage: NextPage = () => {
               subHeading={`${event._count.Applicant} 人`}
             />
           </div>
-          <div className={css({ flexGrow: 1, maxWidth: "50%" })}>
+          <div
+            className={css({ flexGrow: 1, [notMobile]: { maxWidth: "50%" } })}
+          >
             <Heading>申し込みフォーム</Heading>
             <ApplicantForm
               onSubmit={handleSubmitApply(snackbar)(trpc)(router)}

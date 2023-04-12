@@ -17,6 +17,7 @@ import {
   Grade,
 } from "../../models/EventUser";
 import { createParticipantOrApplicantInput } from "../../service/EventUser";
+import { onlyMobile, notMobile } from "../../style/mediaQuery";
 
 interface FormValues {
   eventId: string;
@@ -141,6 +142,7 @@ const GradeCombobox: FC<ComboboxProps> = ({ onChange }) => {
       name="gradeComboboxLabel"
       options={gradeComboboxLabels}
       errorsName="grade"
+      disabled={!departmentComboboxLabelValue}
       onChnage={(newLabel) => {
         // @ts-ignore
         setValue("grade", gradeLabelToValue[newLabel]);
@@ -176,7 +178,12 @@ export const ApplicantForm: FC<Props> = ({ defaultValues, onSubmit }) => {
         <div
           className={css({
             display: "flex",
-            columnGap: theme.sizing.scale1200,
+            [onlyMobile]: {
+              flexDirection: "column",
+            },
+            [notMobile]: {
+              columnGap: theme.sizing.scale1200,
+            },
           })}
         >
           <DepartmentCombobox onChange={() => methods.trigger("email")} />
@@ -184,9 +191,6 @@ export const ApplicantForm: FC<Props> = ({ defaultValues, onSubmit }) => {
         </div>
 
         <SubmitButton>申し込む</SubmitButton>
-        <pre>
-          <code>{JSON.stringify(methods.formState.errors, null, 2)}</code>
-        </pre>
       </form>
     </FormProvider>
   );
