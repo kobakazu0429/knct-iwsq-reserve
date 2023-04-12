@@ -159,8 +159,6 @@ describe("applicantsToParticipants", () => {
       ]
     `);
 
-    // 7 = default deadline
-    vi.setSystemTime(addHours(now, 7));
     const result2 = await applicantsToParticipants();
     expect(result2.ok).toBe(true);
     expect(result2.message).toBe(
@@ -177,6 +175,8 @@ describe("applicantsToParticipants", () => {
       }))
     ).toBe(undefined);
 
+    // 7 = default deadline
+    vi.setSystemTime(addHours(now, 7));
     await cancelOverDeadline();
 
     const result3 = await applicantsToParticipants();

@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { addHours } from "date-fns";
 import { prisma } from "../prisma";
 
-export const createDeadline = (now: Date = new Date(), hours = 6) => {
+export const createDeadline = (now = new Date(), hours = 6) => {
   return addHours(now, hours);
 };
 
@@ -344,7 +344,7 @@ export const applicantsToParticipants = (
 
     // イベントIDがinputに含まれる、もしくは全てのイベントで、
     // 開始時刻がnowより後のイベントかつ、
-    // キャンセルしていない(締め切りを過ぎたらcanceled_atは自動で入る)かつ、
+    // キャンセルしていない(締め切りを過ぎたらcanceled_atは自動で入る)かつ、締め切りを過ぎていない
     const events = await tx.event.findMany({
       select: {
         id: true,
@@ -353,6 +353,16 @@ export const applicantsToParticipants = (
           include: { EventUser: true },
           where: {
             canceled_at: null,
+            OR: [
+              {
+                deadline: {
+                  gte: now,
+                },
+              },
+              {
+                deadline: null,
+              },
+            ],
           },
           orderBy: {
             createdAt: "asc",
@@ -365,11 +375,9 @@ export const applicantsToParticipants = (
         },
       },
       where: {
-        ...(input?.eventIds && {
-          id: {
-            in: input?.eventIds,
-          },
-        }),
+        id: {
+          in: input?.eventIds,
+        },
         start_time: {
           gt: now,
         },
@@ -386,40 +394,25 @@ export const applicantsToParticipants = (
     // イベントの参加可能人数を参加予定者が下回っている
     // かつ、申込者がいるイベント
     const shouldApplicantToParticipateEvents = events
-      .filter((event) => {
-        // 参加予定者と参加確定待ちのユーザー数
-        const willParticipate =
-          event.Participant.length +
-          event.Applicant.filter((a) => {
-            if (!a.deadline) return false;
-            return a.deadline?.getTime() < now.getTime();
-          }).length;
-
-        const leftParticipate = event.attendance_limit - willParticipate > 0;
-        const hasApplicants =
-          event.Applicant.filter((a) => !a.deadline).length > 0;
-        return leftParticipate && hasApplicants;
-      })
       .map((event) => {
+        const participantCount = event.Participant.length;
+        const hasDeadlineCount = event.Applicant.filter(
+          ({ deadline }) => deadline
+        ).length;
+
         // 参加予定者と参加確定待ちのユーザー数
-        const willParticipate =
-          event.Participant.length +
-          event.Applicant.filter((a) => {
-            if (!a.deadline) return false;
-            return a.deadline?.getTime() < now.getTime();
-          }).length;
+        const willParticipate = participantCount + hasDeadlineCount;
         const takeParticipate = event.attendance_limit - willParticipate;
 
         return {
           id: event.id,
-          Applicant: event.Applicant.filter((a) => {
-            // 参加確定待ち
-            if (a.deadline) return false;
-
-            return true;
-          }).slice(0, takeParticipate),
+          Applicant: event.Applicant.filter(({ deadline }) => !deadline).slice(
+            0,
+            takeParticipate
+          ),
         };
-      });
+      })
+      .filter((event) => event.Applicant.length > 0);
 
     if (shouldApplicantToParticipateEvents.length === 0) {
       return {
@@ -679,26 +672,6 @@ export const cancelOverDeadline = (
     }
 
     return { ok: true, message: "success", result: noticeUsers };
-  });
-};
-
-export const updateParticipantableNotifiedAtInput = z.object({
-  applicantIds: z.string().array().nonempty(),
-});
-
-export const updateParticipantableNotifiedAt = async (
-  input: z.infer<typeof updateParticipantableNotifiedAtInput>
-) => {
-  const now = new Date();
-  return prisma.applicant.updateMany({
-    data: {
-      participantable_notified_at: now,
-    },
-    where: {
-      id: {
-        in: input.applicantIds,
-      },
-    },
   });
 };
 

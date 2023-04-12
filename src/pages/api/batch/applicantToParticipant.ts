@@ -5,7 +5,6 @@ import {
   applicantsToParticipantsInput,
   createAppliedCancelUrl,
   createConfirmParticipatingUrl,
-  updateParticipantableNotifiedAt,
 } from "../../../service/EventUser";
 import { sendgrid } from "../../../service/SendGrid";
 import { getBaseUrl } from "../../../utils/url";
@@ -54,12 +53,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       text: applicantsToParticipantsMailBody,
       personalizations,
     });
-
-    const applicantIds = result.map((v) => v.Applicant!.id) as [
-      string,
-      ...string[]
-    ];
-    await updateParticipantableNotifiedAt({ applicantIds });
 
     return res.status(200).end();
   } catch (error) {
