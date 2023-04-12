@@ -343,7 +343,8 @@ export const applicantsToParticipants = (
     const now = new Date();
 
     // イベントIDがinputに含まれる、もしくは全てのイベントで、
-    // 開始時刻がnowより後のイベント
+    // 開始時刻がnowより後のイベントかつ、
+    // キャンセルしていない(締め切りを過ぎたらcanceled_atは自動で入る)かつ、
     const events = await tx.event.findMany({
       select: {
         id: true,
@@ -352,15 +353,6 @@ export const applicantsToParticipants = (
           include: { EventUser: true },
           where: {
             canceled_at: null,
-            participantable_notified_at: null,
-            OR: [
-              { deadline: null },
-              {
-                deadline: {
-                  gt: now,
-                },
-              },
-            ],
           },
           orderBy: {
             createdAt: "asc",
@@ -395,19 +387,37 @@ export const applicantsToParticipants = (
     // かつ、申込者がいるイベント
     const shouldApplicantToParticipateEvents = events
       .filter((event) => {
-        const canParticipate =
-          event.attendance_limit - event.Participant.length > 0;
+        // 参加予定者と参加確定待ちのユーザー数
+        const willParticipate =
+          event.Participant.length +
+          event.Applicant.filter((a) => {
+            if (!a.deadline) return false;
+            return a.deadline?.getTime() < now.getTime();
+          }).length;
 
-        const hasApplicants = event.Applicant.length > 0;
-        return canParticipate && hasApplicants;
+        const leftParticipate = event.attendance_limit - willParticipate > 0;
+        const hasApplicants =
+          event.Applicant.filter((a) => !a.deadline).length > 0;
+        return leftParticipate && hasApplicants;
       })
       .map((event) => {
-        const takeParticipate =
-          event.attendance_limit - event.Participant.length;
+        // 参加予定者と参加確定待ちのユーザー数
+        const willParticipate =
+          event.Participant.length +
+          event.Applicant.filter((a) => {
+            if (!a.deadline) return false;
+            return a.deadline?.getTime() < now.getTime();
+          }).length;
+        const takeParticipate = event.attendance_limit - willParticipate;
 
         return {
           id: event.id,
-          Applicant: event.Applicant.slice(0, takeParticipate),
+          Applicant: event.Applicant.filter((a) => {
+            // 参加確定待ち
+            if (a.deadline) return false;
+
+            return true;
+          }).slice(0, takeParticipate),
         };
       });
 

@@ -163,9 +163,27 @@ describe("applicantsToParticipants", () => {
     vi.setSystemTime(addHours(now, 7));
     const result2 = await applicantsToParticipants();
     expect(result2.ok).toBe(true);
-    expect(result2.message).toBe("success");
+    expect(result2.message).toBe(
+      "No shouldApplicantToParticipateEvents were found to process."
+    );
     expect(
       result2.result?.map((v) => ({
+        userId: v.id,
+        eventId: v.Applicant?.Event.id,
+        deadline: v.Applicant?.deadline,
+        canceled_at: v.Applicant?.canceled_at,
+        deadline_notified_at: v.Applicant?.deadline_notified_at,
+        participantable_notified_at: v.Applicant?.participantable_notified_at,
+      }))
+    ).toBe(undefined);
+
+    await cancelOverDeadline();
+
+    const result3 = await applicantsToParticipants();
+    expect(result3.ok).toBe(true);
+    expect(result3.message).toBe("success");
+    expect(
+      result3.result?.map((v) => ({
         userId: v.id,
         eventId: v.Applicant?.Event.id,
         deadline: v.Applicant?.deadline,
