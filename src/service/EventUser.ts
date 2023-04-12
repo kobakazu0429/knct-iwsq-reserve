@@ -534,6 +534,7 @@ export const confirmParticipantingInput = z.object({
 export const confirmParticipanting = async (
   input: z.infer<typeof confirmParticipantingInput>
 ) => {
+  const now = new Date();
   const event = await prisma.applicant.findUnique({
     select: {
       eventId: true,
@@ -547,6 +548,7 @@ export const confirmParticipanting = async (
 
   return prisma.applicant.update({
     data: {
+      canceled_at: now,
       EventUser: {
         update: {
           Participant: {
