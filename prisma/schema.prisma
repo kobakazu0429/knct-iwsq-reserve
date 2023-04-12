@@ -58,16 +58,18 @@ model EventUser {
 }
 
 model Applicant {
-  id           String    @id @default(cuid())
-  canceled_at  DateTime?
-  cancel_token String
-  deadline     DateTime?
-  eventUserId  String    @unique
-  EventUser    EventUser @relation(fields: [eventUserId], references: [id])
-  eventId      String
-  Event        Event     @relation(fields: [eventId], references: [id])
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
+  id                          String    @id @default(cuid())
+  canceled_at                 DateTime?
+  cancel_token                String
+  participantable_notified_at DateTime?
+  deadline                    DateTime?
+  deadline_notified_at        DateTime?
+  eventUserId                 String    @unique
+  EventUser                   EventUser @relation(fields: [eventUserId], references: [id])
+  eventId                     String
+  Event                       Event     @relation(fields: [eventId], references: [id])
+  createdAt                   DateTime  @default(now()) @map("created_at")
+  updatedAt                   DateTime  @default(now()) @updatedAt @map("updated_at")
 
   @@unique([eventId, eventUserId])
 }

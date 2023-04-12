@@ -422,6 +422,9 @@ export const applicantsToParticipants = (
       Applicant: {
         id: string;
         cancel_token: string;
+        canceled_at: Date | null;
+        deadline_notified_at: Date | null;
+        participantable_notified_at: Date | null;
         deadline: Date | null;
         Event: {
           id: string;
@@ -444,6 +447,7 @@ export const applicantsToParticipants = (
             Applicant: {
               update: {
                 deadline: createDeadline(),
+                participantable_notified_at: now,
               },
             },
           },
@@ -455,6 +459,9 @@ export const applicantsToParticipants = (
               select: {
                 id: true,
                 cancel_token: true,
+                canceled_at: true,
+                deadline_notified_at: true,
+                participantable_notified_at: true,
                 deadline: true,
                 Event: {
                   select: {
@@ -583,6 +590,7 @@ export const cancelOverDeadline = (
         id: true,
       },
       where: {
+        deadline_notified_at: null,
         deadline: {
           lte: now,
         },
@@ -656,5 +664,25 @@ export const cancelOverDeadline = (
     }
 
     return { ok: true, message: "success", result: noticeUsers };
+  });
+};
+
+export const updateParticipantableNotifiedAtInput = z.object({
+  applicantIds: z.string().array().nonempty(),
+});
+
+export const updateParticipantableNotifiedAt = async (
+  input: z.infer<typeof updateParticipantableNotifiedAtInput>
+) => {
+  const now = new Date();
+  return prisma.applicant.updateMany({
+    data: {
+      participantable_notified_at: now,
+    },
+    where: {
+      id: {
+        in: input.applicantIds,
+      },
+    },
   });
 };
