@@ -21,9 +21,6 @@ const publicEventArgs = (input: { eventId?: string; now: Date }) =>
           Applicant: {
             where: {
               canceled_at: null,
-              deadline: {
-                gt: input.now,
-              },
             },
           },
           Participant: {
@@ -123,16 +120,6 @@ export const getEvent = async (input: z.infer<typeof getEventInput>) => {
           Applicant: {
             where: {
               canceled_at: null,
-              OR: [
-                {
-                  deadline: {
-                    gt: new Date(),
-                  },
-                },
-                {
-                  deadline: null,
-                },
-              ],
             },
           },
           Participant: {
@@ -181,9 +168,6 @@ export const listEvents = async (input: z.infer<typeof listEventsInput>) => {
           Applicant: {
             where: {
               canceled_at: null,
-              deadline: {
-                gt: new Date(),
-              },
             },
           },
           Participant: {
