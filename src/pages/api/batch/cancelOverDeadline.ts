@@ -3,6 +3,7 @@ import { verifySignatureWithSigningKey } from "../../../libs/qstash/verify";
 import {
   cancelOverDeadline,
   cancelOverDeadlineInput,
+  updateOverDeadlineNotifiedAt,
 } from "../../../service/EventUser";
 import { sendgrid } from "../../../service/SendGrid";
 import {
@@ -41,6 +42,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       text: cancelOverDeadlineMailBody,
       personalizations,
     });
+
+    const applicantIds = result.map((v) => v.id) as [string, ...string[]];
+    await updateOverDeadlineNotifiedAt({ applicantIds });
 
     return res.status(200).end();
   } catch (error) {
