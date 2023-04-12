@@ -171,10 +171,12 @@ export const createParticipantOrApplicantInput = z.union([
     z.object({
       email: z
         .string()
+
+        // https://github.com/colinhacks/zod/pull/2274
         // .email()
         .endsWith(
-          "@kurekosen-ac.jp",
-          "学生は @kurekosen-ac.jp で終わるメールアドレスを入力してください。"
+          "@kure.kosen-ac.jp",
+          "学生は @kure.kosen-ac.jp で終わるメールアドレスを入力してください。"
         ),
       department: z.enum(["M", "E", "C", "A", "S"]),
       grade: z.enum([
