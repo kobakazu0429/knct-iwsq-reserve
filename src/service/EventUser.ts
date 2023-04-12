@@ -520,7 +520,7 @@ export const confirmableParticipanting = (
     },
     where: {
       Applicant: {
-        every: {
+        some: {
           id: input.applicantId,
         },
       },
