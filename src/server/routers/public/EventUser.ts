@@ -188,16 +188,16 @@ export const eventUsersRouter = router({
       const result = await confirmableParticipanting(input);
       return {
         event: {
-          id: result.id,
-          name: result.name,
+          id: result.Event.id,
+          name: result.Event.name,
         },
         applicant: {
-          deadline: result.Applicant[0]!.deadline,
-          canceled_at: result.Applicant[0]!.canceled_at,
+          deadline: result.deadline,
+          canceled_at: result.canceled_at,
         },
         participant: {
-          canceled_at: result.Applicant[0]!.EventUser.Participant?.canceled_at,
-          created_at: result.Applicant[0]!.EventUser.Participant?.createdAt,
+          canceled_at: result.EventUser.Participant?.canceled_at,
+          created_at: result.EventUser.Participant?.createdAt,
         },
       };
     }),

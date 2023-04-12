@@ -498,35 +498,31 @@ export const confirmableParticipantingInput = z.object({
 export const confirmableParticipanting = (
   input: z.infer<typeof confirmableParticipantingInput>
 ) => {
-  return prisma.event.findFirstOrThrow({
+  return prisma.applicant.findFirstOrThrow({
     select: {
       id: true,
-      name: true,
-      Applicant: {
+      deadline: true,
+      canceled_at: true,
+      cancel_token: true,
+      EventUser: {
         select: {
-          id: true,
-          deadline: true,
-          canceled_at: true,
-          cancel_token: true,
-          EventUser: {
+          Participant: {
             select: {
-              Participant: {
-                select: {
-                  canceled_at: true,
-                  createdAt: true,
-                },
-              },
+              canceled_at: true,
+              createdAt: true,
             },
           },
         },
       },
-    },
-    where: {
-      Applicant: {
-        some: {
-          id: input.applicantId,
+      Event: {
+        select: {
+          id: true,
+          name: true,
         },
       },
+    },
+    where: {
+      id: input.applicantId,
     },
   });
 };
