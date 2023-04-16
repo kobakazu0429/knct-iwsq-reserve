@@ -4,7 +4,7 @@ import { Heading } from "baseui/heading";
 import { EventLists, type EventProps } from "../../components/events/lists";
 import { BaseLayout } from "../../layouts/base";
 import { useTrpc } from "../../trpc";
-import { formatDatetime } from "../../utils/date";
+import { formatDatetimeWithDay } from "../../utils/date";
 import { calcRemaining } from "../../utils/EventUser";
 
 export default function Events() {
@@ -17,7 +17,7 @@ export default function Events() {
 
   const events: EventProps[] = data.map((event) => ({
     name: event.name,
-    startTime: formatDatetime(event.start_time),
+    startTime: formatDatetimeWithDay(event.start_time),
     remaining: calcRemaining(
       event.attendance_limit,
       event._count.Participant,

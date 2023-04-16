@@ -15,6 +15,13 @@ const EventList: FC<{ event: EventProps }> = ({ event }) => {
   return (
     <ListItem
       overrides={{
+        Root: {
+          style: {
+            [onlyMobile]: {
+              marginBottom: "50px",
+            },
+          },
+        },
         Content: {
           style: {
             [onlyMobile]: {
