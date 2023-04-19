@@ -6,6 +6,7 @@ import {
   StatefulDataTable,
   NumericalColumn,
   StringColumn,
+  CategoricalColumn,
   CustomColumn,
 } from "baseui/data-table";
 import { Link } from "../../../components/baseui/Link";
@@ -20,7 +21,7 @@ const columns = [
     title: "イベント名",
     mapDataToValue: (data: Event) => data.name,
   }),
-  StringColumn({
+  CategoricalColumn({
     title: "状態",
     mapDataToValue: (data: Event) => data.status,
   }),
@@ -44,7 +45,7 @@ const columns = [
     title: "キャンセル待ち",
     mapDataToValue: (data: Event) => data._count.Applicant,
   }),
-  StringColumn({
+  CategoricalColumn({
     title: "開催者",
     mapDataToValue: (data: Event) => data.organizer.name,
   }),
@@ -72,12 +73,20 @@ const EventsPage: NextPage = () => {
     console.log("error", error);
   }
 
+  const initialFilters = new Map([
+    [
+      "状態",
+      { description: "終了", exclude: true, selection: new Set(["終了"]) },
+    ],
+  ]);
+
   return (
     <Dashboard>
       <div className={css({ height: "800px", width: "100%" })}>
         <StatefulDataTable
           columns={columns}
           rows={(data ?? []).map((v: any) => ({ id: v.id, data: v }))}
+          initialFilters={initialFilters}
           loading={isLoading}
           loadingMessage="読み込み中"
           emptyMessage="イベントは見つかりませんでした"
