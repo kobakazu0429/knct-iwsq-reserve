@@ -56,6 +56,7 @@ const DateTimePicker: FC<{
         <FormControl label="　" caption="　">
           <TimePicker
             format="24"
+            step={300}
             value={value[type === "start" ? 0 : 1]}
             onChange={timePickerOnChange}
           />
