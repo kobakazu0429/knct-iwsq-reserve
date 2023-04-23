@@ -22,7 +22,7 @@
     "@prisma/client": "^4.11.0",
     "@trpc/client": "^10.18.0",
     "@trpc/server": "^10.18.0",
-    "@types/node": "18.15.11",
+    "@types/node": "18.15.12",
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",
     "baseui": "^12.2.0",
