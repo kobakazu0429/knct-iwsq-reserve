@@ -51,9 +51,9 @@
     "@faker-js/faker": "^7.6.0",
     "@kobakazu0429/eslint-config-typescript-react": "^3.1.4",
     "@types/jsonwebtoken": "^9.0.1",
-    "@vitest/coverage-c8": "^0.30.0",
+    "@vitest/coverage-c8": "^0.31.0",
     "eslint-plugin-import-access": "^1.0.2",
     "ts-node": "^10.9.1",
-    "vitest": "^0.30.0"
+    "vitest": "^0.31.0"
   }
 }
