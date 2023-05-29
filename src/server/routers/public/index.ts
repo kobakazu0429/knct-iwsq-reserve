@@ -1,6 +1,7 @@
 import { router } from "../../trpc";
 import { eventsRouter } from "./Events";
 import { eventUsersRouter } from "./EventUser";
+import { TeamsRouter } from "./Teams";
 
 /**
  * @package
@@ -8,4 +9,5 @@ import { eventUsersRouter } from "./EventUser";
 export const publicRouter = router({
   events: eventsRouter,
   eventUsers: eventUsersRouter,
+  teams: TeamsRouter,
 });

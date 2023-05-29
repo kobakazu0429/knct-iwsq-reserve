@@ -34,6 +34,10 @@ const nav: Item[] = [
     title: "ユーザー(Admin)",
     itemId: "/dashboard/users",
   },
+  {
+    title: "Teams(Admin)",
+    itemId: "/dashboard/teams/inviteMembers",
+  },
 ];
 
 interface Props {
