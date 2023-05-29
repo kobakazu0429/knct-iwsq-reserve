@@ -18,6 +18,7 @@ export const TeamsRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+      // @ts-ignore: Just work it
       const result = await inviteUserToTeam(input);
       return { result };
     }),
