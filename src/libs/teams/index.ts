@@ -159,5 +159,5 @@ export const inviteUserToTeam = async ({
     }
   );
 
-  return res;
+  return res.data;
 };

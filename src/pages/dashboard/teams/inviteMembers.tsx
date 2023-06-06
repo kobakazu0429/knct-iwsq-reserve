@@ -37,7 +37,7 @@ export const handleSubmit = ({ enqueue, dequeue }: SnackbarFunction) => {
           const [result] = await Promise.allSettled([
             trpc.public.teams.inviteUserToTeam.mutate({
               teamId: data.teamId,
-              userIds: data.userIds.split("\n"),
+              userIds: data.userIds.split("\n").filter((id) => id !== ""),
               generalChannelId: data.generalChannelId,
               teamsAuthToken: data.teamsAuthToken,
               teamsSkypeTokenAsm: data.teamsSkypeTokenAsm,
@@ -46,12 +46,15 @@ export const handleSubmit = ({ enqueue, dequeue }: SnackbarFunction) => {
             sleep(1000),
           ]);
           console.log(result);
-          if (result.status === "rejected") throw result;
 
           dequeue();
+
+          if (result.status === "rejected") throw result;
+
           enqueue({ message: "招待しました" });
           await router.push(`/dashboard/`);
         } catch (error) {
+          enqueue({ message: "失敗しました" });
           console.error(error);
         }
       };
