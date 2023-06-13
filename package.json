@@ -23,7 +23,7 @@
     "@trpc/client": "^10.18.0",
     "@trpc/server": "^10.18.0",
     "@types/node": "18.16.17",
-    "@types/react": "18.2.9",
+    "@types/react": "18.2.10",
     "@types/react-dom": "18.2.4",
     "axios": "^1.4.0",
     "baseui": "^12.2.0",
