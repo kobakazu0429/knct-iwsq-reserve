@@ -20,6 +20,7 @@
         "name": "eslint-plugin-import-access"
       }
     ]
+    // "noErrorTruncation": true
   },
   "ts-node": {
     "compilerOptions": {
